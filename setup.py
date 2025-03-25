@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             "led_blinker = rplidar_recorder.led_blinker:main",
+            "red_led = rplidar_recorder.red_led:main",
         ],
     },
 )

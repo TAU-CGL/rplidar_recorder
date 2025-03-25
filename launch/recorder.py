@@ -4,13 +4,7 @@ from launch.events.process import ProcessStarted
 from launch.event_handlers.on_process_start import OnProcessStart
 from launch_ros.actions import Node
 
-from gpiozero import LED
-LED_PIN = 16 # Red
-
 def generate_launch_description():
-    led = LED(LED_PIN)
-    led.on()
-
     rplidar_ros = Node(
             package='rplidar_ros',
             executable='rplidar_node',
@@ -25,7 +19,14 @@ def generate_launch_description():
                         'scan_mode': "Standard"}],
             on_exit=Shutdown(),
             output='screen')
-    led_blinker = Node(
+    
+    red_led = Node(
+        package='rplidar_recorder',
+        executable='red_led',
+        name='red_led',
+        output='screen'
+    )
+    green_led_blinker = Node(
             package='rplidar_recorder',
             executable='led_blinker',
             name='led_blinker',
@@ -34,6 +35,7 @@ def generate_launch_description():
     
 
     return LaunchDescription([
-        RegisterEventHandler(event_handler=OnProcessStart(target_action=rplidar_ros, on_start=led_blinker)),
-        rplidar_ros,
+        RegisterEventHandler(event_handler=OnProcessStart(target_action=red_led, on_start=rplidar_ros)),
+        RegisterEventHandler(event_handler=OnProcessStart(target_action=rplidar_ros, on_start=green_led_blinker)),
+        red_led,
     ])
