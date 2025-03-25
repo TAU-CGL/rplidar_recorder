@@ -12,10 +12,10 @@ def generate_launch_description():
             exec_name='rplidar_node',
             parameters=[{'channel_type':"serial",
                         'serial_port': "/dev/ttyUSB0",
-                        'serial_baudrate': "460800",
+                        'serial_baudrate': 460800,
                         'frame_id': "laser",
-                        'inverted': "false",
-                        'angle_compensate': "true",
+                        'inverted': False,
+                        'angle_compensate': True,
                         'scan_mode': "Standard"}],
             on_exit=Shutdown(),
             output='screen')
