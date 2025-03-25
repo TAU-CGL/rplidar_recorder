@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'led_blinker = rplidar_recorder.led_blinker:main',
         ],
     },
 )
