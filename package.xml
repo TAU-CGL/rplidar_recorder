@@ -2,10 +2,12 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>rplidar_recorder</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="mickelbil84@gmail.com">ubuntu</maintainer>
-  <license>TODO: License declaration</license>
+  <version>0.1.0</version>
+  <description>ROS2 package for continous recording of 2D LiDAR data</description>
+  <maintainer email="mickelbil84@gmail.com">mickelbil84</maintainer>
+  <license>MIT</license>
+
+  <exec_depend>rclpy</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
