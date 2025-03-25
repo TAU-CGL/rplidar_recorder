@@ -27,15 +27,21 @@ def generate_launch_description():
         output='screen'
     )
     green_led_blinker = Node(
-            package='rplidar_recorder',
-            executable='led_blinker',
-            name='led_blinker',
-            output='screen'
-        )
+        package='rplidar_recorder',
+        executable='led_blinker',
+        name='led_blinker',
+        output='screen'
+    )
+    frame_link = Node( # For displaying the laser scan in rviz
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        arguments=["0", "0", "0", "0", "0", "0", "map", "laser"],
+    ),
     
 
     return LaunchDescription([
         RegisterEventHandler(event_handler=OnProcessStart(target_action=red_led, on_start=rplidar_ros)),
         RegisterEventHandler(event_handler=OnProcessStart(target_action=rplidar_ros, on_start=green_led_blinker)),
         red_led,
+        frame_link,
     ])
