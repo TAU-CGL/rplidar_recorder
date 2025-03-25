@@ -2,7 +2,7 @@ import rclpy
 from rclpy.node import Node
 
 from gpiozero import LED
-LED_PIN = 16
+LED_PIN = 12 # Green
 
 class LEDBlinker(Node):
     def __init__(self):

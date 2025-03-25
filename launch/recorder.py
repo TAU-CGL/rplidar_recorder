@@ -2,7 +2,7 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 
 from gpiozero import LED
-LED_PIN = 12
+LED_PIN = 16 # Red
 
 def generate_launch_description():
     LED(LED_PIN).on()
