@@ -38,7 +38,7 @@ def generate_launch_description():
         arguments=["0", "0", "0", "0", "0", "0", "map", "laser"],
     )
     bag = ExecuteProcess(
-        cmd=["ros2", "bag", "record", "/scan", "-d", "10", "-o", "/home/ubuntu/rosbags", "compression-mode", "file", "compression-format", "zstd"],
+        cmd=["ros2", "bag", "record", "/scan", "-d", "10", "-o", "/home/ubuntu/rosbags", "--compression-mode", "file", "--compression-format", "zstd"],
         output="screen",
     )
     
