@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import RegisterEventHandler, Shutdown
+from launch.actions import RegisterEventHandler, Shutdown, ExecuteProcess
 from launch.events.process import ProcessStarted
 from launch.event_handlers.on_process_start import OnProcessStart
 from launch_ros.actions import Node
@@ -37,10 +37,9 @@ def generate_launch_description():
         executable="static_transform_publisher",
         arguments=["0", "0", "0", "0", "0", "0", "map", "laser"],
     )
-    bag = Node(
-        package="rosbag",
-        executable="record",
-        arguments=["/scan", "-d", "10", "-o", "/home/ubuntu/rosbags", "compression-mode", "file", "compression-format", "zstd"]
+    bag = ExecuteProcess(
+        cmd=["ros2", "bag", "record", "/scan", "-d", "10", "-o", "/home/ubuntu/rosbags", "compression-mode", "file", "compression-format", "zstd"],
+        output="screen",
     )
     
 
