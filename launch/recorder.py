@@ -1,3 +1,5 @@
+import datetime
+
 from launch import LaunchDescription
 from launch.actions import RegisterEventHandler, Shutdown, ExecuteProcess
 from launch.events.process import ProcessStarted
@@ -37,8 +39,11 @@ def generate_launch_description():
         executable="static_transform_publisher",
         arguments=["0", "0", "0", "0", "0", "0", "map", "laser"],
     )
+
+    today = datetime.datetime.now()
+    bag_name = today.strftime("%Y-%m-%d-%H-%M-%S")
     bag = ExecuteProcess(
-        cmd=["ros2", "bag", "record", "/scan", "-d", "10", "-o", "/home/ubuntu/rosbags", "--compression-mode", "file", "--compression-format", "zstd"],
+        cmd=["ros2", "bag", "record", "/scan", "-d", "10", "-o", f"/home/ubuntu/rosbags/{bag_name}/", "--compression-mode", "file", "--compression-format", "zstd"],
         output="screen",
     )
     
