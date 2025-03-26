@@ -43,7 +43,7 @@ def generate_launch_description():
     today = datetime.datetime.now()
     bag_name = today.strftime("%Y-%m-%d-%H-%M-%S")
     bag = ExecuteProcess(
-        cmd=["ros2", "bag", "record", "/scan", "-d", "10", "-o", f"/home/ubuntu/rosbags/{bag_name}/", "--compression-mode", "file", "--compression-format", "zstd"],
+        cmd=["ros2", "bag", "record", "/scan", "-d", "300", "-o", f"/home/ubuntu/rosbags/{bag_name}/", "--compression-mode", "file", "--compression-format", "zstd"],
         output="screen",
     )
     
