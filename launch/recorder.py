@@ -37,11 +37,17 @@ def generate_launch_description():
         executable="static_transform_publisher",
         arguments=["0", "0", "0", "0", "0", "0", "map", "laser"],
     )
+    bag = Node(
+        package="rosbag",
+        executable="record",
+        arguments=["/scan", "-d", "10", "-o", "/home/ubuntu/rosbags", "compression-mode", "file", "compression-format", "zstd"]
+    )
     
 
     return LaunchDescription([
         RegisterEventHandler(event_handler=OnProcessStart(target_action=red_led, on_start=rplidar_ros)),
         RegisterEventHandler(event_handler=OnProcessStart(target_action=rplidar_ros, on_start=green_led_blinker)),
+        RegisterEventHandler(event_handler=OnProcessStart(target_action=rplidar_ros, on_start=bag)),
         red_led,
         frame_link,
     ])
