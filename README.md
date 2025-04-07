@@ -61,4 +61,5 @@ TBD.
     * Switch `rplidar_ros` to the `ros2` branch: `cd rplidar_ros && gco ros2 && cd ..`
     * Clone `rplidar_recorder`: `git clone https://github.com/TAU-CGL/rplidar_recorder.git`
     * Build the workspace: `cd ~/ros_ws && colcon build`
+    * Source the workspace: `echo "source ~/ros_ws/install/setup.bash" >> ~/.bashrc`
 11. Run: `sudo crontab -e` and then add the line `@reboot /home/ubuntu/ros_ws/src/rplidar_recorder/chmod_ttyUSB.bash`
