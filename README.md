@@ -62,6 +62,7 @@ TBD.
     * Clone `rplidar_recorder`: `git clone https://github.com/TAU-CGL/rplidar_recorder.git`
     * Build the workspace: `cd ~/ros_ws && colcon build`
     * Source the workspace: `echo "source ~/ros_ws/install/setup.bash" >> ~/.bashrc`
-10. Miscelenous steps:
+11. Miscelenous steps:
     * Install `sudo apt-get install python3-gpiozero`
-11. Run: `sudo crontab -e` and then add the line `@reboot /home/ubuntu/ros_ws/src/rplidar_recorder/chmod_ttyUSB.bash`
+12. Run: `sudo chmod a+x /home/ubuntu/ros_ws/src/rplidar_recorder/launch.bash`
+13. Run: `sudo crontab -e` and then add the line `@reboot /home/ubuntu/ros_ws/src/rplidar_recorder/launch.bash`
