@@ -19,8 +19,11 @@ However, for this repository (and the corresponding CAD models) we used the foll
 * Any HDMI compatible screen
 * USB Keyboard and mouse
 * PLA (we used black)
-* 4x M3x?? screws
-* 4x M2x?? screws
+* 4x M2x20mm screws
+* 4x M2x10mm screws
+* 4x M3x12mm screws
+* 8x M2xNuts
+* 8x M3xNuts
 * 4x Raspberry pi standard mount screws
 * 1x 3mm Red & 1X 3mm Green LEDs (see next section)
 * 2x 220 Ohm resistors
@@ -31,9 +34,14 @@ However, for this repository (and the corresponding CAD models) we used the foll
 
 ## Installation
 
-### Automatic Setup
+### Physical construction
 
-TBD.
+* Insert 4x M2x20mm screws through the base 
+* Pad each screw with two M3 nuts, and tighten with one M2 nut
+* Place the raspberry pi, through the screws, and tighen with another M2 nut
+* Connect the LiDAR to the top plate with 4x M2x10mm screws
+* Connect the top plate to the bottom plate with 4x M3x12mm screws
+
 
 ### Manual Setup
 
