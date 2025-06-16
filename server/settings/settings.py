@@ -27,6 +27,10 @@ SECRET_KEY = os.environ["RPLIDAR_RECORDER_SECRET_KEY"]
 DEBUG = False
 
 ALLOWED_HOSTS = ["127.0.0.1"]
+if "HOST1" in os.environ:
+    ALLOWED_HOSTS.append(os.environ["HOST1"])
+if "HOST2" in os.environ:
+    ALLOWED_HOSTS.append(os.environ["HOST2"])
 
 
 # Application definition
