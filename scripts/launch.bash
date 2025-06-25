@@ -3,7 +3,7 @@
 # On first boot - make sure the contraption is registered in the system
 # and save its name to ~/.contraption_uuid
 export SERVER_URL="<server_url>"
-python /home/ubuntu/ros_ws/src/rplidar_recorder/scripts/init_name.py
+python3 /home/ubuntu/ros_ws/src/rplidar_recorder/scripts/init_name.py
 
 # Setup USB permissions for the RPLIDAR device
 sudo chmod 777 /dev/ttyUSB0
