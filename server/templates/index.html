@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Simple Tab Homepage{% endblock %}
+
+{% block content %}
+<nav>
+    <a onclick="showTab('admin')">Admin</a>
+    <a onclick="showTab('tab2')">Tab 2</a>
+    <a onclick="showTab('tab3')">Tab 3</a>
+</nav>
+
+<div id="admin" class="tab-content active">
+    <iframe src="/admin/"></iframe>
+</div>
+<div id="tab2" class="tab-content">
+    <h2>Tab 2 Content</h2>
+    <p>This is a placeholder for another feature or page.</p>
+</div>
+<div id="tab3" class="tab-content">
+    <h2>Tab 3 Content</h2>
+    <p>This is yet another placeholder. You can link this to anything you like.</p>
+</div>
+
+<script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(div => {
+            div.classList.remove('active');
+        });
+        document.getElementById(tabId).classList.add('active');
+    }
+</script>
+{% endblock %}
