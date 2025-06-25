@@ -10,7 +10,7 @@
 
 <script>
     function sendNewContraption() {
-        fetch('/api/new-contraption')
+        fetch('/api/contraption/register')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('new-contraption-result').value = data;
