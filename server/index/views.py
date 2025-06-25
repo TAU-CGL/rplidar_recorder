@@ -12,4 +12,4 @@ def index(request):
 def new_contraption(request):
     contraption = Contraption.objects.create()
     contraption.save()
-    return JsonResponse({"uuid": contraption.uuid})
+    return JsonResponse({"uuid": contraption.name_uuid})
