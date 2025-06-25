@@ -1,0 +1,22 @@
+<h2>Miscellaneous</h2>
+
+<h3>Test Createing a New Contraption</h3>
+
+<button onclick="sendNewContraption()">Create New Contraption</button>
+<div style="margin-top: 1em;">
+    <textarea id="new-contraption-result" rows="4" cols="60" readonly></textarea>
+</div>
+
+
+<script>
+    function sendNewContraption() {
+        fetch('/api/contraption/register')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('new-contraption-result').value = data;
+            })
+            .catch(error => {
+                document.getElementById('new-contraption-result').value = 'Error: ' + error;
+            });
+    }
+</script>

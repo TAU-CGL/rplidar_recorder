@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}RPLIDAR Recorder Server{% endblock %}
+
+{% block content %}
+<nav>
+    <a onclick="showTab('admin')">Admin</a>
+    <a onclick="showTab('monitor')">Monitor</a>
+    <a onclick="showTab('calibration')">Calibration</a>
+    <a onclick="showTab('miscellaneous')">Miscellaneous</a>
+</nav>
+
+<div id="admin" class="tab-content active">
+    <iframe src="/admin/"></iframe>
+</div>
+<div id="monitor" class="tab-content">
+    {% include "tabs/monitor.html" %}
+</div>
+<div id="calibration" class="tab-content">
+    {% include "tabs/calibration.html" %}
+</div>
+<div id="miscellaneous" class="tab-content">
+    {% include "tabs/miscellaneous.html" %}
+</div>
+
+<script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(div => {
+            div.classList.remove('active');
+        });
+        document.getElementById(tabId).classList.add('active');
+    }
+</script>
+{% endblock %}
