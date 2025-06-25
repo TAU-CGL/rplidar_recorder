@@ -5,20 +5,22 @@
 {% block content %}
 <nav>
     <a onclick="showTab('admin')">Admin</a>
-    <a onclick="showTab('tab2')">Tab 2</a>
-    <a onclick="showTab('tab3')">Tab 3</a>
+    <a onclick="showTab('monitor')">Monitor</a>
+    <a onclick="showTab('calibration')">Calibration</a>
+    <a onclick="showTab('miscellaneous')">Miscellaneous</a>
 </nav>
 
 <div id="admin" class="tab-content active">
     <iframe src="/admin/"></iframe>
 </div>
-<div id="tab2" class="tab-content">
-    <h2>Tab 2 Content</h2>
-    <p>This is a placeholder for another feature or page.</p>
+<div id="monitor" class="tab-content">
+    {% include "tabs/monitor.html" %}
 </div>
-<div id="tab3" class="tab-content">
-    <h2>Tab 3 Content</h2>
-    <p>This is yet another placeholder. You can link this to anything you like.</p>
+<div id="calibration" class="tab-content">
+    {% include "tabs/calibration.html" %}
+</div>
+<div id="miscellaneous" class="tab-content">
+    {% include "tabs/miscellaneous.html" %}
 </div>
 
 <script>
