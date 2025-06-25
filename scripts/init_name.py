@@ -4,7 +4,7 @@ import requests
 
 
 SERVER_URL = os.environ["SERVER_URL"]
-UUID_FILE = "/home/user/.contraption_uuid"
+UUID_FILE = "/home/ubuntu/.contraption_uuid"
 
 def main():
     if os.path.exists(UUID_FILE):
