@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Contraption
 
@@ -14,6 +15,7 @@ def new_contraption(request):
     contraption.save()
     return JsonResponse({"uuid": contraption.name_uuid})
 
+@csrf_exempt
 def new_scan(request):
     if request.method == "POST":
         contraption_uuid = request.POST.get("uuid")
