@@ -5,7 +5,7 @@ import paramiko
 from rclpy.node import Node
 
 class RosbagUploader(Node):
-    def _init__(self):
+    def __init__(self):
         super().__init__('rosbag_uploader')
 
         self.ROSBAGS_FOLDER = "/home/ubuntu/rosbags"
