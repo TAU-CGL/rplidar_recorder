@@ -15,7 +15,7 @@ class RosbagUploader(Node):
             self.contraption_uuid = f.read().strip()
         
         # Run every 5 minutes
-        self.timer = self.create_timer(300, self.upload_rosbag)
+        self.timer = self.create_timer(10, self.upload_rosbag)
         self.get_logger().info("RosbagUploader node started.")
     
     def upload_rosbag(self):
