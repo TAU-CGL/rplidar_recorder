@@ -14,7 +14,7 @@ class Contraption(models.Model):
 class LaserScan(models.Model):
     contraption = models.ForeignKey(Contraption, on_delete=models.CASCADE, related_name='laser_scans')
     timestamp = models.DateTimeField(auto_now_add=True)
-    ranges = models.JSONField()  # Store ranges as a JSON array
+    ranges = models.CharField(max_length=2**20)  # Store ranges as a JSON array
 
     def __str__(self):
         return f"LaserScan|| {self.contraption.nickname} ({self.contraption.name_uuid}) [[{self.timestamp}]]"
