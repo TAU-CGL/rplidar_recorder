@@ -23,6 +23,7 @@ setup(
             "led_blinker = rplidar_recorder.led_blinker:main",
             "red_led = rplidar_recorder.red_led:main",
             "scan_uploader = rplidar_recorder.scan_uploader:main",
+            "rosbag_uploader = rplidar_recorder.rosbag_uploader:main",
         ],
     },
 )

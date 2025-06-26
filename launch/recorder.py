@@ -39,6 +39,12 @@ def generate_launch_description():
         name='scan_uploader',
         output='screen'
     )
+    rosbag_uploader = Node(
+        package='rplidar_recorder',
+        executable='rosbag_uploader',
+        name='rosbag_uploader',
+        output='screen'
+    )
 
 
     today = datetime.datetime.now()
@@ -53,6 +59,7 @@ def generate_launch_description():
         RegisterEventHandler(event_handler=OnProcessStart(target_action=rplidar_ros, on_start=green_led_blinker)),
         RegisterEventHandler(event_handler=OnProcessStart(target_action=rplidar_ros, on_start=bag)),
         RegisterEventHandler(event_handler=OnProcessStart(target_action=rplidar_ros, on_start=scan_uploader)),
+        RegisterEventHandler(event_handler=OnProcessStart(target_action=rplidar_ros, on_start=rosbag_uploader)),
         rplidar_ros,
         frame_link,
     ])
