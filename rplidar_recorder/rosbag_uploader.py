@@ -43,3 +43,17 @@ class RosbagUploader(Node):
         sftp.close()
         transport.close()
         self.get_logger().info(f"Rosbag uploaded successfully for contraption {self.contraption_uuid}.")
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = RosbagUploader()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
