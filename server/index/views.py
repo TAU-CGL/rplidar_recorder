@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -18,8 +19,9 @@ def new_contraption(request):
 @csrf_exempt
 def new_scan(request):
     if request.method == "POST":
-        contraption_uuid = request.POST.get("contraption_uuid")
-        ranges = request.POST.get("ranges")
+        post = json.loads(request.body)
+        contraption_uuid = post["contraption_uuid"]
+        ranges = post["ranges"]
 
         try:
             contraption = Contraption.objects.get(name_uuid=contraption_uuid)
