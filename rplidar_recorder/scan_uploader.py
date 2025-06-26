@@ -26,7 +26,7 @@ class ScanUploader(Node):
             10
         )
         self.get_logger().info("ScanUploader node started.")
-        self.last_sent = datetime.min()
+        self.last_sent = datetime.min
 
     # The following code sends *ALL* messages, we need to send only one message per minute.
     def scan_callback(self, msg: LaserScan):
