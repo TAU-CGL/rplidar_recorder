@@ -71,6 +71,6 @@ However, for this repository (and the corresponding CAD models) we used the foll
     * Build the workspace: `cd ~/ros_ws && colcon build`
     * Source the workspace: `echo "source ~/ros_ws/install/setup.bash" >> ~/.bashrc`
 11. Miscelenous steps:
-    * Install `sudo apt-get install python3-gpiozero`
+    * Install `sudo apt-get install python3-gpiozero python3-paramiko`
 12. Run: `sudo chmod a+x /home/ubuntu/ros_ws/src/rplidar_recorder/launch.bash`
 13. Run: `sudo crontab -e` and then add the line `@reboot /home/ubuntu/ros_ws/src/rplidar_recorder/launch.bash`
