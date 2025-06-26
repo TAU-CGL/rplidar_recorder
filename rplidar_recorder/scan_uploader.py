@@ -16,7 +16,7 @@ class ScanUploader(Node):
 
         self.SERVER_URL = os.environ["SERVER_URL"]
         self.UUID_FILE = "/home/ubuntu/.contraption_uuid"
-        with open(self.UUID_FILE, "w") as f:
+        with open(self.UUID_FILE, "r") as f:
             self.contraption_uuid = f.read()
 
         self.scan_subscriber = self.create_subscription(
