@@ -33,6 +33,8 @@ class ScanUploader(Node):
         now = datetime.now()
         if (now - self.last_sent).total_seconds() < 60:
             return
+        self.last_sent = now
+        
         timestamp = datetime.now().isoformat()
         data = {
             'contraption_uuid': self.contraption_uuid,
