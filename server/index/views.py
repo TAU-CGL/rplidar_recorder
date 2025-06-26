@@ -18,7 +18,7 @@ def new_contraption(request):
 @csrf_exempt
 def new_scan(request):
     if request.method == "POST":
-        contraption_uuid = request.POST.get("uuid")
+        contraption_uuid = request.POST.get("contraption_uuid")
         ranges = request.POST.get("ranges")
 
         try:
@@ -27,6 +27,6 @@ def new_scan(request):
             scan.save()
             return JsonResponse({"status": "success", "scan_id": scan.id})
         except Contraption.DoesNotExist:
-            return JsonResponse({"status": "error", "message": "Contraption not found"}, status=404)
+            return JsonResponse({"status": "error", "message": "Contraption [{contraption_uuid}] not found"}, status=404)
 
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
