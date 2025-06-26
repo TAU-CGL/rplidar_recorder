@@ -27,6 +27,6 @@ def new_scan(request):
             scan.save()
             return JsonResponse({"status": "success", "scan_id": scan.id})
         except Contraption.DoesNotExist:
-            return JsonResponse({"status": "error", "message": "Contraption [{contraption_uuid}] not found"}, status=404)
+            return JsonResponse({"status": "error", "message": f"Contraption [{contraption_uuid}] not found"}, status=404)
 
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
