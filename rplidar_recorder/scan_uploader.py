@@ -4,7 +4,6 @@ ROS node that uploads /scan topics once every minute to the endpoint "URL/api/co
 import os
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoS
 from sensor_msgs.msg import LaserScan
 import requests
 import json
@@ -20,12 +19,11 @@ class ScanUploader(Node):
         with open(self.UUID_FILE, "w") as f:
             self.contraption_uuid = f.read()
 
-        qos_profile = QoSProfile(depth=10, durability=QoSDurabilityPolicy.TRANSIENT_LOCAL)
         self.scan_subscriber = self.create_subscription(
             LaserScan,
             '/scan',
             self.scan_callback,
-            qos_profile
+            10
         )
         self.get_logger().info("ScanUploader node started.")
         self.last_sent = datetime.min()
