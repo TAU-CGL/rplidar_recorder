@@ -1,6 +1,6 @@
-    """
-    ROS node that uploads /scan topics once every minute to the endpoint "URL/api/contraption/scan"
-    """
+"""
+ROS node that uploads /scan topics once every minute to the endpoint "URL/api/contraption/scan"
+"""
 import os
 import rclpy
 from rclpy.node import Node
