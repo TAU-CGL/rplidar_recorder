@@ -22,12 +22,6 @@ def generate_launch_description():
             on_exit=Shutdown(),
             output='screen')
     
-    red_led = Node(
-        package='rplidar_recorder',
-        executable='red_led',
-        name='red_led',
-        output='screen'
-    )
     green_led_blinker = Node(
         package='rplidar_recorder',
         executable='led_blinker',
@@ -39,6 +33,13 @@ def generate_launch_description():
         executable="static_transform_publisher",
         arguments=["0", "0", "0", "0", "0", "0", "map", "laser"],
     )
+    scan_uploader = Node(
+        package='rplidar_recorder',
+        executable='scan_uploader',
+        name='scan_uploader',
+        output='screen'
+    )
+
 
     today = datetime.datetime.now()
     bag_name = today.strftime("%Y-%m-%d-%H-%M-%S")
@@ -49,9 +50,9 @@ def generate_launch_description():
     
 
     return LaunchDescription([
-        RegisterEventHandler(event_handler=OnProcessStart(target_action=red_led, on_start=rplidar_ros)),
         RegisterEventHandler(event_handler=OnProcessStart(target_action=rplidar_ros, on_start=green_led_blinker)),
         RegisterEventHandler(event_handler=OnProcessStart(target_action=rplidar_ros, on_start=bag)),
-        red_led,
+        RegisterEventHandler(event_handler=OnProcessStart(target_action=rplidar_ros, on_start=scan_uploader)),
+        rplidar_ros,
         frame_link,
     ])
