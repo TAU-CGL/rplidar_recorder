@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.utils.timezone import localtime
 
 # Create your models here.
 class Contraption(models.Model):
@@ -17,4 +18,5 @@ class LaserScan(models.Model):
     ranges = models.CharField(max_length=2**20)  # Store ranges as a JSON array
 
     def __str__(self):
-        return f"LaserScan|| {self.contraption.nickname} ({self.contraption.name_uuid}) [[{self.timestamp}]]"
+        local_ts = localtime(self.timestamp)
+        return f"LaserScan|| {self.contraption.nickname} ({self.contraption.name_uuid}) [[{local_ts}]]"
