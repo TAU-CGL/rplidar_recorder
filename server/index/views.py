@@ -25,7 +25,7 @@ def new_scan(request):
 
         try:
             contraption = Contraption.objects.get(name_uuid=contraption_uuid)
-            scan = contraption.laser_scans.create(ranges=str(ranges))
+            scan = contraption.laser_scans.create(ranges=str(ranges), timestamp=post.get("timestamp"))
             scan.save()
             return JsonResponse({"status": "success", "scan_id": scan.id})
         except Contraption.DoesNotExist:
