@@ -36,16 +36,20 @@ class RosbagUploader(Node):
         for dirfile in os.listdir(self.ROSBAGS_FOLDER):
             local_path = os.path.join(self.ROSBAGS_FOLDER, dirfile)
             for filename in os.listdir(local_path):
-                if not filename.endswith('.zstd'):
+                try:
+                    if not filename.endswith('.zstd'):
+                        continue
+                    local_file_path = os.path.join(local_path, filename)
+                    remote_file_path = os.path.join(remote_path, dirfile, filename)
+                    if dirfile not in sftp.listdir(remote_path):
+                        self.get_logger().info(f"Creating remote directory {os.path.join(remote_path, dirfile)}...")
+                        sftp.mkdir(os.path.join(remote_path, dirfile))
+                    self.get_logger().info(f"Uploading {local_file_path} to {remote_file_path}...")
+                    sftp.put(local_file_path, remote_file_path)
+                    os.remove(local_file_path)  # Remove the local file after upload
+                except Exception as e:
+                    self.get_logger().error(f"Failed to upload {local_file_path} to {remote_file_path}: {e}")
                     continue
-                local_file_path = os.path.join(local_path, filename)
-                remote_file_path = os.path.join(remote_path, dirfile, filename)
-                if dirfile not in sftp.listdir(remote_path):
-                    self.get_logger().info(f"Creating remote directory {os.path.join(remote_path, dirfile)}...")
-                    sftp.mkdir(os.path.join(remote_path, dirfile))
-                self.get_logger().info(f"Uploading {local_file_path} to {remote_file_path}...")
-                sftp.put(local_file_path, remote_file_path)
-                os.remove(local_file_path)  # Remove the local file after upload
         
         sftp.close()
         transport.close()

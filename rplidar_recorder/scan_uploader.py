@@ -46,11 +46,15 @@ class ScanUploader(Node):
                 'intensities': list(msg.intensities) if msg.intensities else []
             }
         }
-        response = requests.post(f'{self.SERVER_URL}/api/contraption/scan', json=data)
-        if response.status_code == 200:
-            self.get_logger().info(f"Scan uploaded successfully at {timestamp}.")
-        else:
-            self.get_logger().error(f"Failed to upload scan: {response.text}")
+        
+        try:
+            response = requests.post(f'{self.SERVER_URL}/api/contraption/scan', json=data)
+            if response.status_code == 200:
+                self.get_logger().info(f"Scan uploaded successfully at {timestamp}.")
+            else:
+                self.get_logger().error(f"Failed to upload scan: {response.text}")
+        except requests.RequestException as e:
+            self.get_logger().error(f"Request failed: {e}")
 
 def main(args=None):
     rclpy.init(args=args)
