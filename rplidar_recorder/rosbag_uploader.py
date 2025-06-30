@@ -1,13 +1,15 @@
 import os
+import pathlib
 
 import rclpy
-import paramiko
+import requests
 from rclpy.node import Node
 
 class RosbagUploader(Node):
     def __init__(self):
         super().__init__('rosbag_uploader')
 
+        self.SERVER_URL = os.environ["SERVER_URL"]
         self.ROSBAGS_FOLDER = "/home/ubuntu/rosbags"
         self.UUID_FILE = "/home/ubuntu/.contraption_uuid"
         self.REMOTE_ROOT = "/home/rplidar_recorder"
@@ -15,7 +17,7 @@ class RosbagUploader(Node):
             self.contraption_uuid = f.read().strip()
         
         # Run every hour
-        # self.timer = self.create_timer(3600, self.upload_rosbag)
+        self.timer = self.create_timer(10, self.upload_rosbag)
         self.get_logger().info("RosbagUploader node started.")
     
     def upload_rosbag(self):
@@ -23,16 +25,7 @@ class RosbagUploader(Node):
         # For now, we will just log that the upload is happening
         self.get_logger().info(f"Uploading rosbag for contraption {self.contraption_uuid}...")
 
-        host, port = os.environ["SFTP_HOST"], 23
-        transport = paramiko.Transport((host, port))
-        username, password = os.environ["SFTP_USERNAME"], os.environ["SFTP_PASSWORD"]
-        transport.connect(None, username, password)
-        sftp = paramiko.SFTPClient.from_transport(transport)
-
         remote_path = os.path.join(self.REMOTE_ROOT, self.contraption_uuid)
-        if self.contraption_uuid not in sftp.listdir(self.REMOTE_ROOT):
-            self.get_logger().info(f"Creating remote directory {remote_path}...")
-            sftp.mkdir(remote_path)
         for dirfile in os.listdir(self.ROSBAGS_FOLDER):
             local_path = os.path.join(self.ROSBAGS_FOLDER, dirfile)
             for filename in os.listdir(local_path):
@@ -41,18 +34,23 @@ class RosbagUploader(Node):
                         continue
                     local_file_path = os.path.join(local_path, filename)
                     remote_file_path = os.path.join(remote_path, dirfile, filename)
-                    if dirfile not in sftp.listdir(remote_path):
-                        self.get_logger().info(f"Creating remote directory {os.path.join(remote_path, dirfile)}...")
-                        sftp.mkdir(os.path.join(remote_path, dirfile))
                     self.get_logger().info(f"Uploading {local_file_path} to {remote_file_path}...")
-                    sftp.put(local_file_path, remote_file_path)
-                    os.remove(local_file_path)  # Remove the local file after upload
+                    
+                    local_file = pathlib.Path(local_file_path)
+                    with local_file.open("rb") as fp:
+                        r = requests.post(
+                            f"{self.SERVER_URL}/api/contraption/bag/upload",
+                            files={"file": {local_file.name, fp, "application/octet-stream"}},
+                            data={"remote_path": remote_file_path},
+                            timeout=(30, 900)
+                        )
+                        if r.status_code != 200:
+                            raise Exception(r.content.decode("utf-8"))
+
                 except Exception as e:
                     self.get_logger().error(f"Failed to upload {local_file_path} to {remote_file_path}: {e}")
                     continue
-        
-        sftp.close()
-        transport.close()
+    
         self.get_logger().info(f"Rosbag uploaded successfully for contraption {self.contraption_uuid}.")
 
 def main(args=None):
