@@ -45,7 +45,7 @@ class RosbagUploader(Node):
                             timeout=(30, 900)
                         )
                         if r.status_code != 200:
-                            raise Exception(r.content.decode("utf-8"))
+                            raise Exception(r.text)
 
                 except Exception as e:
                     self.get_logger().error(f"Failed to upload {local_file_path} to {remote_file_path}: {e}")
