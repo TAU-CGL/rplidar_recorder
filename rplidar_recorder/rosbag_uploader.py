@@ -40,9 +40,9 @@ class RosbagUploader(Node):
                     with local_file.open("rb") as fp:
                         r = requests.post(
                             f"{self.SERVER_URL}/api/contraption/bag/upload",
-                            files={"file": {local_file.name, fp, "application/octet-stream"}},
+                            files={"file": (local_file.name, fp, "application/octet-stream")},
                             data={"remote_path": remote_file_path},
-                            timeout=(30, 900)
+                            timeout=(30, 900),
                         )
                         if r.status_code != 200:
                             raise Exception(r.text)
