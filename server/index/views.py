@@ -83,7 +83,7 @@ def _save_to_temp(uploaded_file) -> str:
 
 def _sftp_upload(local_path: str, remote_filename: str) -> None:
     # Connect to the SFTP server
-    host, port = os.environ["SFTP_HOST"], os.environ["SFTP_PORT"]
+    host, port = os.environ["SFTP_HOST"], int(os.environ["SFTP_PORT"])
     transport = paramiko.Transport((host, port))
     username, password = os.environ["SFTP_USERNAME"], os.environ["SFTP_PASSWORD"]
     transport.connect(None, username, password)
