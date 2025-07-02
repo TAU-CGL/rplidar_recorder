@@ -64,7 +64,7 @@ However, for this repository (and the corresponding CAD models) we used the foll
     * Run: `echo "exec openbox-session" >> ~/.xinitrc`
     * Run: `mkdir ~/.config/openbox && echo "tint2" >> ~/.config/openbox/autostart`
 10. Create the ROS2 workspace:
-    * Run: `cd ~ && mkdir ros_ws && mkdir ros_ws/src && cd ros_ws/src
+    * Run: `cd ~ && mkdir ros_ws && mkdir ros_ws/src && cd ros_ws/src`
     * Clone `rplidar_ros`: `git clone https://github.com/Slamtec/rplidar_ros.git`
     * Switch `rplidar_ros` to the `ros2` branch: `cd rplidar_ros && gco ros2 && cd ..`
     * Clone `rplidar_recorder`: `git clone https://github.com/TAU-CGL/rplidar_recorder.git`
