@@ -74,3 +74,9 @@ However, for this repository (and the corresponding CAD models) we used the foll
     * Install `sudo apt-get install python3-gpiozero python3-paramiko`
 12. Run: `sudo chmod a+x /home/ubuntu/ros_ws/src/rplidar_recorder/launch.bash`
 13. Run: `sudo crontab -e` and then add the line `@reboot /home/ubuntu/ros_ws/src/rplidar_recorder/launch.bash`
+14. Set the correct timezone: `sudo timedatectl set-timezone <timeszone>` (Get timezone name with `timedatectl list-timezones`. Israel time is `Asia/Jerusalem`).
+
+
+## Notes
+
+* Although neither `ros2 topic echo /scan` nor `rviz2` then `/scan` topic work when the code runs from crontab, the `/scan` topic is accessible to other nodes running from crontab.
