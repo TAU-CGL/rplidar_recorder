@@ -46,6 +46,7 @@ class RosbagUploader(Node):
                         )
                         if r.status_code != 200:
                             raise Exception(r.text)
+                    os.remove(local_file_path)
 
                 except Exception as e:
                     self.get_logger().error(f"Failed to upload {local_file_path} to {remote_file_path}: {e}")
