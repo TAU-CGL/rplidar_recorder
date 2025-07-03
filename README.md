@@ -83,6 +83,8 @@ After completing this process on some device (make sure to delete the `~/rosbags
 of the "model contraption". 
 See: [https://www.tomshardware.com/how-to/back-up-raspberry-pi-as-disk-image](https://www.tomshardware.com/how-to/back-up-raspberry-pi-as-disk-image)
 
+TODO: Create a sanitized image for public distribution.
+
 
 ## Notes
 
