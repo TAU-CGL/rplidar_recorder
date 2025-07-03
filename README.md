@@ -72,9 +72,16 @@ However, for this repository (and the corresponding CAD models) we used the foll
     * Source the workspace: `echo "source ~/ros_ws/install/setup.bash" >> ~/.bashrc`
 11. Miscelenous steps:
     * Install `sudo apt-get install python3-gpiozero`
-12. Run: `sudo chmod a+x /home/ubuntu/ros_ws/src/rplidar_recorder/launch.bash`
+12. Run: `sudo chmod a+x /home/ubuntu/ros_ws/src/rplidar_recorder/scripts/launch.bash`
 13. Run: `sudo crontab -e` and then add the line `@reboot /home/ubuntu/ros_ws/src/rplidar_recorder/scripts/launch.bash`
 14. Set the correct timezone: `sudo timedatectl set-timezone <timeszone>` (Get timezone name with `timedatectl list-timezones`. Israel time is `Asia/Jerusalem`).
+
+### Model Image
+
+We finally note that one doesn't actually have to run this entire process for every recorder device; 
+After completing this process on some device (make sure to delete the `~/rosbags` folder and the `~/.contraption_uuid` file), you can create an ISO image
+of the "model contraption". 
+See: [https://www.tomshardware.com/how-to/back-up-raspberry-pi-as-disk-image](https://www.tomshardware.com/how-to/back-up-raspberry-pi-as-disk-image)
 
 
 ## Notes
