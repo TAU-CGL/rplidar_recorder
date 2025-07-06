@@ -11,8 +11,8 @@ curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-a
 sudo dpkg -i /tmp/ros2-apt-source.deb
 sudo apt update -y
 sudo apt upgrade -y
-sudo apt install ros-humble-ros-base
-sudo apt install ros-dev-tools
+sudo apt install ros-humble-ros-base -y
+sudo apt install ros-dev-tools -y
 echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 cd ~ && mkdir ros_ws && mkdir ros_ws/src && cd ros_ws/src
 git clone https://github.com/Slamtec/rplidar_ros.git
