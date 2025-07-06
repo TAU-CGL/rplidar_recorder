@@ -18,6 +18,7 @@ cd ~ && mkdir ros_ws && mkdir ros_ws/src && cd ros_ws/src
 git clone https://github.com/Slamtec/rplidar_ros.git
 cd rplidar_ros && gco ros2 && cd ..
 git clone https://github.com/TAU-CGL/rplidar_recorder.git
+source ~/.bashrc
 cd ~/ros_ws && colcon build
 echo "source ~/ros_ws/install/setup.bash" >> ~/.bashrc
 sudo apt-get install python3-gpiozero -y
