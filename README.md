@@ -78,12 +78,10 @@ However, for this repository (and the corresponding CAD models) we used the foll
 
 ### Model Image
 
-We finally note that one doesn't actually have to run this entire process for every recorder device; 
-After completing this process on some device (make sure to delete the `~/rosbags` folder and the `~/.contraption_uuid` file), you can create an ISO image
-of the "model contraption". 
-See: [https://www.tomshardware.com/how-to/back-up-raspberry-pi-as-disk-image](https://www.tomshardware.com/how-to/back-up-raspberry-pi-as-disk-image)
+We finally note that one doesn't actually have to run this entire process for every recorder device;
+You can use the imager to create an Ubuntu install already set with correct username/password, and connected to WiFi.
+Then, you only need to run the `firstboot.sh` script:
 
-TODO: Create a sanitized image for public distribution.
 
 
 ## Notes
