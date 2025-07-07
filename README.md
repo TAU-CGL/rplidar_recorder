@@ -38,8 +38,9 @@ To connect the LEDs to the Raspberry Pi, we need to do some soldering:
 1. Solder the 220 Ohm resistor to one of the LED cathodes (we used the positive).
     * An easy way to do so is to wrap one side of the resistor on the cathode
 2. Strip two jumper cables (make sure that the unstripped end is a female connecter)
-    * One red/purple/orange - positive
-    * One brown/blue/green - negative
+    * One red/white/purple/orange - positive
+    * One brown/black/blue/green - negative
+    * Each color pairing above was used repectively (e.g., blue + purple)
 3. Solder the stripped end of each respective jumper cable to the LED cathodes
 4. Optional: wrap the solder joints with tape (for aesthetics)
 
@@ -56,6 +57,14 @@ To connect the LEDs to the Raspberry Pi, we need to do some soldering:
     * You can use the screwdriver to make the gap less tight
     * You may also use the pliers to "guide" the screw
 * Connect the top plate to the bottom plate with 4x M3x12mm screws
+* Connect the soldered LEDs to the correct pins on the Raspberry Pi:
+
+| Connector | Pin | Description |
+| --------- | --- | ----------- |
+| Red (+)   |  2  | 5V          |
+| Red (-)   |  6  | GND         |
+| Green (+) | 32  | GPIO 12     |
+| Green (-) | 34  | GND         |
 
 
 ### Manual Setup
