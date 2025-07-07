@@ -54,7 +54,7 @@ def list_contraptions(request):
             last_scan = contraption.laser_scans.latest('timestamp')
             contraption["last_scan"] = last_scan.timestamp.isoformat()
             contraption["online"] = last_scan.timestamp > (timezone.now() - timedelta(minutes=5))
-        except Contraption.laser_scans.RelatedObjectDoesNotExist:
+        except:
             contraption["last_scan"] = None
             contraption["online"] = False
     return JsonResponse(contraption_list, status=200)
