@@ -46,5 +46,5 @@ sudo apt-get install python3-gpiozero -y
 # Add boot script to crontab
 ################################
 sudo chmod a+x /root/ros_ws/src/rplidar_recorder/scripts/launch.bash
-line=@reboot /root/ros_ws/src/rplidar_recorder/scripts/launch.bash
+line="@reboot /root/ros_ws/src/rplidar_recorder/scripts/launch.bash"
 (sudo crontab -l; echo "$line") | sudo crontab -
