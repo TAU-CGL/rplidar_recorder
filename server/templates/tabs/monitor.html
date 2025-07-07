@@ -1,6 +1,50 @@
 <h2>Contraption Monitor</h2>
 <p>In this dashboard you can view the satus of all contraptions, as well as preview the scan history.</p>
 
+<div class="monitor-dashboard">
 
+    <div class="monitor-left-panel">
+        <div class="monitor-contraption">
+            <h3>dev1</h3>
+            <p>Last seen: <span class="monitor-last-seen">07.07.2025 20:42</span></p>
+        </div>
+
+        <div class="monitor-contraption">
+            <h3>dev2</h3>
+            <p>Last seen: <span class="monitor-last-seen">07.07.2025 20:41</span></p>
+        </div>
+
+        <div class="monitor-contraption">
+            <h3>dev3</h3>
+            <p>Last seen: <span class="monitor-last-seen">07.07.2025 20:44</span></p>
+        </div>
+
+        <div class="monitor-contraption">
+            <h3>dev4</h3>
+            <p>Last seen: <span class="monitor-last-seen">07.07.2025 20:42</span></p>
+        </div>
+
+        <div class="monitor-contraption">
+            <h3>dev5</h3>
+            <p>Last seen: <span class="monitor-last-seen">07.07.2025 20:44</span></p>
+        </div>
+    </div>
+
+    <div class="monitor-right-panel">
+        <span class="monitor-preview-control">
+            <button><<</button>
+            <button>>></button>
+        </span>
+
+        <div class="monitor-preview-container">
+            <p id="monitor-no-selection-text">
+                Select a contraption to preview its LiDAR scans.
+            </p>
+        </div>
+
+
+    </div>
+
+</div>
 
 <script src="/static/js/monitor.js"></script>
