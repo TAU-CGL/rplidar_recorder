@@ -14,7 +14,7 @@ from django.core.files.uploadhandler import TemporaryFileUploadHandler
 from django.utils import timezone
 from datetime import timedelta
 
-from .models import Contraption
+from .models import Contraption, LaserScan
 
 def teapot(_):
     return HttpResponse("I'm a teapot", status=418)
@@ -51,7 +51,7 @@ def list_contraptions(request):
     # Get last seen scan for each contraption
     for contraption in contraption_list:
         try:
-            last_scan = contraption.laser_scans.latest('timestamp')
+            last_scan = LaserScan.objects.filter(contraption__nickname=contraption["nickname"]).latest('timestamp')
             contraption["last_scan"] = last_scan.timestamp.isoformat()
             contraption["online"] = last_scan.timestamp > (timezone.now() - timedelta(minutes=5))
         except:
