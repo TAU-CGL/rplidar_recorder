@@ -52,7 +52,8 @@ def list_contraptions(request):
     for contraption in contraption_list:
         try:
             last_scan = LaserScan.objects.filter(contraption__nickname=contraption["nickname"]).latest('timestamp')
-            contraption["last_scan"] = last_scan.timestamp.isoformat()
+            # Set timezone corrently
+            contraption["last_scan"] = last_scan.timestamp.tzname()
             contraption["online"] = last_scan.timestamp > (timezone.now() - timedelta(minutes=5))
         except:
             contraption["last_scan"] = None
