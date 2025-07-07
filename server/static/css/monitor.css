@@ -1,3 +1,13 @@
+
+:root {
+  /* make the sidebar MUCH wider */
+  --sidebar-width: 380px;     /* was 260px                                     */
+  /* give each row more breathing room            */
+  --row-height: 96px;         /* was 72px                                       */
+  --gap: 1.25rem;             /* larger horizontal padding                      */
+}
+
+
 /* top-level wrapper (replaces the old body rule) */
 .monitor-app {
     display: flex;
@@ -26,6 +36,7 @@
     background: var(--clr-card);
     border-right: 1px solid var(--clr-border);
     display: flex;
+    height: 0.8vh; /* fill most of viewport height */
     flex-direction: column;
 }
 
