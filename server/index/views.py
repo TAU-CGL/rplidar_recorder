@@ -57,7 +57,7 @@ def list_contraptions(request):
         except:
             contraption["last_scan"] = None
             contraption["online"] = False
-    return JsonResponse(contraption_list, status=200)
+    return JsonResponse(contraption_list, status=200, safe=False)
 
 @csrf_exempt
 @require_POST
