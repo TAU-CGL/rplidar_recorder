@@ -20,17 +20,28 @@ However, for this repository (and the corresponding CAD models) we used the foll
 * USB Keyboard and mouse
 * PLA (we used black)
 * 4x M2x20mm screws
-* 4x M2x10mm screws
-* 4x M3x12mm screws
+* 4x M2x10mm screws (M2x12mm is also fine)
+* 4x M3x12mm screws (M3x16mm is also fine)
 * 8x M2xNuts
 * 8x M3xNuts
-* 4x Raspberry pi standard mount screws
 * 1x 3mm Red & 1X 3mm Green LEDs (see next section)
-* 2x 220 Ohm resistors
+* 1x Red female jumper & 1x Black female jumper (see next section)
+* 2x 220 Ohm resistors (see next ssection)
 
 
 ### Preparing LEDs
 
+The contraption has two holes for LEDs: One red which states power on/off,
+and one green which blinks when the ROS nodes properly run.
+To connect the LEDs to the Raspberry Pi, we need to do some soldering:
+
+1. Solder the 220 Ohm resistor to one of the LED cathodes (we used the positive).
+    * An easy way to do so is to wrap one side of the resistor on the cathode
+2. Strip two jumper cables (make sure that the unstripped end is a female connecter)
+    * One red/purple/orange - positive
+    * One brown/blue/green - negative
+3. Solder the stripped end of each respective jumper cable to the LED cathodes
+4. Optional: wrap the solder joints with tape (for aesthetics)
 
 ## Installation
 
@@ -38,8 +49,12 @@ However, for this repository (and the corresponding CAD models) we used the foll
 
 * Insert 4x M2x20mm screws through the base 
 * Pad each screw with two M3 nuts, and tighten with one M2 nut
+    * We recommed using pliers to tighten the M2 nuts.
 * Place the raspberry pi, through the screws, and tighen with another M2 nut
 * Connect the LiDAR to the top plate with 4x M2x10mm screws
+    * Depening on the printer's settings, the holes can be rather narrow
+    * You can use the screwdriver to make the gap less tight
+    * You may also use the pliers to "guide" the screw
 * Connect the top plate to the bottom plate with 4x M3x12mm screws
 
 
