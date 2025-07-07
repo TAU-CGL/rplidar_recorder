@@ -55,7 +55,7 @@ def list_contraptions(request):
             last_scan = LaserScan.objects.filter(contraption__nickname=contraption["nickname"]).latest('timestamp')
             # Set timezone corrently
             contraption["last_scan"] = localtime(last_scan.timestamp).isoformat()
-            contraption["online"] = localtime(last_scan.timestamp) > (timezone.now() - timedelta(minutes=5))
+            contraption["online"] = localtime(last_scan.timestamp) > (timezone.now() - timedelta(minutes=30))
         except:
             contraption["last_scan"] = None
             contraption["online"] = False
