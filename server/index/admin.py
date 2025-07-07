@@ -6,5 +6,8 @@ class ContraptionAdmin(admin.ModelAdmin):
     ordering = ('nickname',)
 admin.site.register(Contraption, ContraptionAdmin)
 
-
-admin.site.register(LaserScan)
+class LaserScanAdmin(admin.ModelAdmin):
+    list_display = ('contraption', 'timestamp')
+    ordering = ('-timestamp',)
+    search_fields = ('contraption__nickname',)
+admin.site.register(LaserScan, LaserScanAdmin)
