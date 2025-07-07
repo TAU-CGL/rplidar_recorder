@@ -1,0 +1,9 @@
+.monitor-left-panel {
+    display:inline-block;
+    width: 30vw;
+}
+.monitor-right-panel {
+    display:inline-block;
+    width: 60vw;
+    height: 80vh;
+}
