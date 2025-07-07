@@ -12,6 +12,7 @@ from django.views.decorators.http import require_POST
 from django.core.files.uploadhandler import TemporaryFileUploadHandler
 
 from django.utils import timezone
+from django.utils.timezone import localtime
 from datetime import timedelta
 
 from .models import Contraption, LaserScan
@@ -53,8 +54,8 @@ def list_contraptions(request):
         try:
             last_scan = LaserScan.objects.filter(contraption__nickname=contraption["nickname"]).latest('timestamp')
             # Set timezone corrently
-            contraption["last_scan"] = last_scan.timestamp.tzname()
-            contraption["online"] = last_scan.timestamp > (timezone.now() - timedelta(minutes=5))
+            contraption["last_scan"] = localtime(last_scan.timestamp).isoformat()
+            contraption["online"] = localtime(last_scan.timestamp) > (timezone.now() - timedelta(minutes=5))
         except:
             contraption["last_scan"] = None
             contraption["online"] = False
