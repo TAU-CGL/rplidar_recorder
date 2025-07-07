@@ -5,5 +5,13 @@
 .monitor-right-panel {
     display:inline-block;
     width: 60vw;
-    height: 80vh;
+    vertical-align: top;
+}
+
+.monitor-preview-control {
+    margin: auto;
+}
+
+.monitor-no-selection-text {
+    text-align: center;
 }
