@@ -97,6 +97,15 @@ We finally note that one doesn't actually have to run this entire process for ev
 You can use the imager to create an Ubuntu install already set with correct username/password, and connected to WiFi.
 Then, you only need to run the `firstboot.sh` script:
 
+    wget https://raw.githubusercontent.com/TAU-CGL/rplidar_recorder/refs/heads/main/firstboot.sh
+    sudo chmod a+x firstboot.sh
+    sudo ./firstboot.sh
+
+Finally, update the remote server address:
+
+    sudo nano /root/ros_ws/src/rplidar_recorder/scripts/launch.bash
+
+And change the value of `SERVER_URL` to the correct one.
 
 
 ## Notes
