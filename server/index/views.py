@@ -11,6 +11,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.core.files.uploadhandler import TemporaryFileUploadHandler
 
+from django.utils import timezone
+from datetime import timedelta
+
 from .models import Contraption
 
 def teapot(_):
@@ -40,6 +43,21 @@ def new_scan(request):
             return JsonResponse({"status": "error", "message": f"Contraption [{contraption_uuid}] not found"}, status=404)
 
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+
+@csrf_exempt
+def list_contraptions(request):
+    contraptions = Contraption.objects.all()
+    contraption_list = [{"nickname": c.nickname} for c in contraptions]
+    # Get last seen scan for each contraption
+    for contraption in contraption_list:
+        try:
+            last_scan = contraption.laser_scans.latest('timestamp')
+            contraption["last_scan"] = last_scan.timestamp.isoformat()
+            contraption["online"] = last_scan.timestamp > (timezone.now() - timedelta(minutes=5))
+        except Contraption.laser_scans.RelatedObjectDoesNotExist:
+            contraption["last_scan"] = None
+            contraption["online"] = False
+    return JsonResponse(contraption_list, status=200)
 
 @csrf_exempt
 @require_POST
