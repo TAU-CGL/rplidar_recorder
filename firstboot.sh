@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+export DEBIAN_FRONTEND=noninteractive
 
 ##################################################
 # Initial boot - make sure apt is correctly updated
@@ -34,6 +34,7 @@ cd ~ && mkdir ros_ws && mkdir ros_ws/src && cd ros_ws/src
 git clone https://github.com/Slamtec/rplidar_ros.git
 cd rplidar_ros && git checkout ros2 && cd ..
 git clone https://github.com/TAU-CGL/rplidar_recorder.git
+source ~/.bashrc
 cd ~/ros_ws && colcon build
 
 ################################
