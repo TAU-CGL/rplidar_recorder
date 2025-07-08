@@ -11,10 +11,10 @@ function add_contraption_div(name, lastSeen, online) {
 
     let contraptionLastSeen = document.createElement("p");
     contraptionLastSeen.innerText = "Last seen:";
+    contraptionLastSeen.classList.add("monitor-last-seen");
     contraptionLastSeen.appendChild(document.createElement("br"));
     let contraptionLastSeenTime = document.createElement("span");
     contraptionLastSeenTime.innerText = lastSeen;
-    contraptionLastSeenTime.classList.add("monitor-last-seen");
     contraptionLastSeen.appendChild(contraptionLastSeenTime);
     contraption.appendChild(contraptionLastSeen);
 
