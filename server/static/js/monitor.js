@@ -31,7 +31,7 @@ function add_contraption_div(name, lastSeen, online) {
 function populate_contraptions(data) {
     monitorLeftPanel.innerHTML = "";
     data.forEach(element => {
-        add_contraption_div(element.nickname, element.lastSeen != null ? element.lastSeen : "---", element.online);
+        add_contraption_div(element.nickname, element.last_scan != null ? element.last_scan : "---", element.online);
     })
 }
 
