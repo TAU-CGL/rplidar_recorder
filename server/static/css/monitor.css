@@ -1,17 +1,60 @@
+.monitor-dashboard {
+    margin: auto;
+}
+
 .monitor-left-panel {
     display:inline-block;
-    width: 30vw;
+    width: 17vw;
+    height: 75vh;
+    overflow: scroll;
+    background-color: #AAAAAA;
 }
 .monitor-right-panel {
     display:inline-block;
-    width: 60vw;
+    width: 80vw;
+    height: 75vh;
     vertical-align: top;
+    background-color: #AAAAAA;
 }
 
 .monitor-preview-control {
     margin: auto;
+    margin: 1em;
+}
+
+.monitor-preview-container {
+    background-color: #EEEEEE;
+    margin: auto;
+    width: 76vw;
+    height: 80%;
+    padding: 1em;
+    margin: 1em;
 }
 
 .monitor-no-selection-text {
     text-align: center;
 }
+
+.monitor-contraption {
+    background-color: #EEEEEE;
+    margin: 0.5em;
+    padding: 0.85em;
+    position: relative;
+    border-radius: 0.25em;
+}
+.monitor-contraption:hover {
+    background-color: #DDDDDD;
+    cursor: pointer;
+}
+
+.monitor-status {
+    position: absolute;
+    right: 1em;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.9em;
+    height: 0.9em;
+    border-radius: 50%;
+}
+.monitor-online  { background-color: #3bb54a; }
+.monitor-offline { background-color: #e05252; }  
