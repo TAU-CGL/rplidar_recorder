@@ -58,3 +58,8 @@
 }
 .monitor-online  { background-color: #3bb54a; }
 .monitor-offline { background-color: #e05252; }  
+.monitor-last-seen {
+    color: #333333;
+    font-size: 0.8em;
+    font-style: italic;
+}
