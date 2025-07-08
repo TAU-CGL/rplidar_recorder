@@ -30,7 +30,7 @@ function add_contraption_div(name, lastSeen, online) {
 }
 function populate_contraptions(data) {
     monitorLeftPanel.innerHTML = "";
-    data.sort((a,b) => a.nickname < b.nickname).forEach(element => {
+    data.sort((a,b) => a.nickname > b.nickname).forEach(element => {
         let lastSeen = element.last_scan != null ? element.last_scan : "---";
         lastSeen = lastSeen.split(".")[0];
         add_contraption_div(element.nickname, lastSeen, element.online);
