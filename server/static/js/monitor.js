@@ -12,7 +12,7 @@ var activeScans = {
 function update_current_scan() {
     let payload = new URLSearchParams({
         contraption_nickname: activeScans.name,
-        timestamp: activeScans.timestamps[activeScans.currentIndex]
+        scan_id: activeScans.timestamps[activeScans.currentIndex].id
     }).toString();
     fetch("/api/contraption/get/scan", {
         method: "POST",
@@ -43,8 +43,8 @@ function on_contraption_click(name, event) {
     }).then(response => {
         console.log("Response from contraption scans:", response);
         response.json().then(data => {
-            activeScans.timestamps = data.map(scan => scan.timestamp);
-            activeScans.timestamps.sort((a, b) => new Date(a) - new Date(b));
+            activeScans.timestamps = data.map(scan => new {ts: scan.timestamp, id: scan.id});
+            activeScans.timestamps.sort((a, b) => new Date(a.ts) - new Date(b.ts));
             activeScans.currentIndex = activeScans.timestamps.length - 1;
             activeScans.name = name;
             update_current_scan();
