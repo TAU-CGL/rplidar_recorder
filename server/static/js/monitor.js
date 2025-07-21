@@ -1,10 +1,15 @@
 var monitorLeftPanel = document.querySelector(".monitor-left-panel");
 var monitorRightPanel = document.querySelector(".monitor-right-panel");
 
+function on_contraption_click(name, event) {
+    console.log("Contraption clicked:", name);
+}
+
 function add_contraption_div(name, lastSeen, online) {
     let contraption = document.createElement("div");
     contraption.classList.add("monitor-contraption");
-
+    contraption.addEventListener("click", (event) => on_contraption_click(name, event));
+    
     let contraptionHeader = document.createElement("h3");
     contraptionHeader.innerText = name;
     contraption.appendChild(contraptionHeader);
