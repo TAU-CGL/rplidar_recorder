@@ -36,7 +36,11 @@
 }
 
 .monitor-preview-label {
-    margin-left: 2em;
+    margin-left: 1em;
+}
+
+#monitor-preview-label-ts {
+    margin-left: 0.3em;
 }
 
 .monitor-contraption {
