@@ -43,7 +43,7 @@ function on_contraption_click(name, event) {
     }).then(response => {
         console.log("Response from contraption scans:", response);
         response.json().then(data => {
-            activeScans.timestamps = data.map(scan => new {ts: scan.timestamp, id: scan.id});
+            activeScans.timestamps = data.map(scan => new Object({ts: scan.timestamp, id: scan.id}));
             activeScans.timestamps.sort((a, b) => new Date(a.ts) - new Date(b.ts));
             activeScans.currentIndex = activeScans.timestamps.length - 1;
             activeScans.name = name;
