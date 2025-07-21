@@ -80,8 +80,8 @@ function update_current_scan_viewport() {
             },
             scales: {
                 y: {
-                    suggestedMin: -6,
-                    suggestedMax: 6
+                    suggestedMin: -4,
+                    suggestedMax: 4
                 },
                 x: {
                     suggestedMin: -6,
