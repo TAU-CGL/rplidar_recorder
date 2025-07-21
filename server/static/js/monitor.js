@@ -3,9 +3,15 @@ var monitorRightPanel = document.querySelector(".monitor-right-panel");
 
 function on_contraption_click(name, event) {
     console.log("Contraption clicked:", name);
+    let payload = new URLSearchParams({
+        contraption_nickname: name
+    }).toString();
     fetch("/api/contraption/list/scans", {
         method: "POST",
-        body: JSON.stringify({ contraption_nickname: name }),
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: payload
     }).then(response => {
         console.log("Response from contraption scans:", response);
     })
