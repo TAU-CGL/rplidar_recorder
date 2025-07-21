@@ -49,10 +49,21 @@ function update_current_scan_viewport() {
     monitorNoSelection.style.display = 'none';
     if (activeScans.chart != null) activeScans.chart.destroy();
 
+    let rawScan = JSON.parse(activeScans.currentScan.replaceAll("\'", "\"").replaceAll("inf", "-1"));
+    let points = []
+
+    let N = rawScan.ranges.length
+    for (let i = 0; i < N; i++) {
+        let theta = i / (N-1) * 2 * Math.PI;
+        let x = rawScan.ranges[i] * Math.cos(theta);
+        let y = rawScan.ranges[i] * Math.sin(theta);
+        points.push([x, y])
+    }
+    
     let data = {
         datasets: [ {
             label: 'scan',
-            data: [[0,0], [1,1], [20,2]]    
+            data: points  
         }]
     }
 
