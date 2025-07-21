@@ -34,7 +34,7 @@ from scipy.optimize import leastsq
 
 @dataclass
 class LidarSnapshot:
-    """A single synchronous 2‑D scan from one LiDAR device."""
+    """A single synchronous 2D scan from one LiDAR device"""
     device_id: str
     timestamp: float          # UNIX time or any synchronized clock
     points: np.ndarray        # shape (N, 2)  --  [[x, y], ...]
@@ -109,7 +109,7 @@ def find_calibration_circle(
     Returns
     -------
     center : np.ndarray
-        1‑D array [x, y] for the best circle's center.
+        1D array [x, y] for the best circle's center.
     radius : float
         Fitted radius (mainly for diagnostics).
 
