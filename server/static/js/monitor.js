@@ -7,7 +7,7 @@ var prevScanButton = document.querySelector("#prev-scan");
 prevScanButton.addEventListener("click", event => on_prev_next_scan_click(-1, event));
 
 var monitorNoSelection = document.querySelector(".monitor-no-selection-text");
-var monitorViewport = document.querySelector(".monitor-preview-container");
+var monitorViewport = document.querySelector("#monitor-plot");
 
 var activeScans = {
     name: "",
@@ -46,7 +46,25 @@ function update_current_scan() {
 
 function update_current_scan_viewport() {
     monitorNoSelection.style.display = 'none';
-    monitorViewport.innerText = activeScans.currentScan;
+    monitorViewport
+
+    new Chart(monitorViewport, {
+        type: 'bar',
+        data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+    }})
 }
 
 function on_prev_next_scan_click(dir, event) {
