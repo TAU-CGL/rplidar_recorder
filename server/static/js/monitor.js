@@ -13,7 +13,8 @@ var activeScans = {
     name: "",
     timestamps: [],
     currentIndex: -1,
-    currentScan: null
+    currentScan: null,
+    chart: null,
 }
 
 function format_ts(ts) {
@@ -46,9 +47,8 @@ function update_current_scan() {
 
 function update_current_scan_viewport() {
     monitorNoSelection.style.display = 'none';
-    monitorViewport
-
-    new Chart(monitorViewport, {
+    if (activeScans.chart != null) activeScans.chart.destroy();
+    activeScans.chart = new Chart(monitorViewport, {
         type: 'bar',
         data: {
             labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
