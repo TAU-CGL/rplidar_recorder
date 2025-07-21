@@ -9,11 +9,15 @@ var activeScans = {
     currentScan: null
 }
 
+function format_ts(ts) {
+    return ts.split(".")[0];
+}
+
 function update_current_scan() {
     // Update the scan label
     document.querySelector("#monitor-preview-label-idx").innerText = 
         (activeScans.currentIndex + 1).toString() + "/" + (activeScans.timestamps.length).toString();
-    document.querySelector("#monitor-preview-label-ts").innerText = activeScans.timestamps[activeScans.currentIndex].ts;
+    document.querySelector("#monitor-preview-label-ts").innerText = format_ts(activeScans.timestamps[activeScans.currentIndex].ts);
 
     let payload = new URLSearchParams({
         contraption_nickname: activeScans.name,
@@ -92,7 +96,7 @@ function populate_contraptions(data) {
     monitorLeftPanel.innerHTML = "";
     data.sort((a,b) => a.nickname > b.nickname).forEach(element => {
         let lastSeen = element.last_scan != null ? element.last_scan : "---";
-        lastSeen = lastSeen.split(".")[0];
+        lastSeen = format_ts(lastSeen);
         add_contraption_div(element.nickname, lastSeen, element.online);
     })
 }
