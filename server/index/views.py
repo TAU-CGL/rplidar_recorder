@@ -61,6 +61,29 @@ def list_contraptions(request):
             contraption["online"] = False
     return JsonResponse(contraption_list, status=200, safe=False)
 
+
+@csrf_exempt
+def list_contraption_scans(request):
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+    post = json.loads(request.body)
+    contraption_nickname = post["contraption_nickname"]
+    
+    conraption = Contraption.objects.filter(nickname=contraption_nickname).first()
+    if not conraption:
+        return JsonResponse({"status": "error", "message": f"Contraption [{contraption_nickname}] not found"}, status=404)
+    scans = LaserScan.objects.filter(contraption=conraption).order_by('-timestamp')
+    scan_list = []
+    for scan in scans:
+        local_ts = localtime(scan.timestamp)
+        scan_list.append({
+            "id": scan.id,
+            "timestamp": local_ts.isoformat(),
+            "ranges": json.loads(scan.ranges)  # Convert ranges back to JSON
+        })
+    return JsonResponse(scan_list, status=200, safe=False)
+
+
 @csrf_exempt
 @require_POST
 def upload_rosbag(request):
