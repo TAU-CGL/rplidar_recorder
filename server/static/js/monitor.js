@@ -55,8 +55,10 @@ function update_current_scan_viewport() {
     let N = rawScan.ranges.length
     for (let i = 0; i < N; i++) {
         let theta = i / (N-1) * 2 * Math.PI;
-        let x = rawScan.ranges[i] * Math.cos(theta);
-        let y = rawScan.ranges[i] * Math.sin(theta);
+        let val = rawScan.ranges[i];
+        if (val < 0) continue;
+        let x = val * Math.cos(theta);
+        let y = val * Math.sin(theta);
         points.push([x, y])
     }
     
@@ -70,7 +72,10 @@ function update_current_scan_viewport() {
     activeScans.chart = new Chart(monitorViewport, {
         type: 'scatter',
         data: data,
-        options: {}})
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }})
 }
 
 function on_prev_next_scan_click(dir, event) {
