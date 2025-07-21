@@ -66,8 +66,7 @@ def list_contraptions(request):
 def list_contraption_scans(request):
     if request.method != "POST":
         return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
-    post = json.loads(request.body.replace("\'", "\""))
-    contraption_nickname = post["contraption_nickname"]
+    contraption_nickname = request.POST["contraption_nickname"]
     
     conraption = Contraption.objects.filter(nickname=contraption_nickname).first()
     if not conraption:
