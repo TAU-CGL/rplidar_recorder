@@ -74,7 +74,10 @@ function update_current_scan_viewport() {
         data: data,
         options: {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            animation: {
+                duration: 0
+            }
         }})
 }
 
