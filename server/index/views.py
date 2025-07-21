@@ -78,7 +78,7 @@ def list_contraption_scans(request):
         scan_list.append({
             "id": scan.id,
             "timestamp": local_ts.isoformat(),
-            "ranges": json.loads(scan.ranges)  # Convert ranges back to JSON
+            "ranges": scan.ranges
         })
     return JsonResponse(scan_list, status=200, safe=False)
 
