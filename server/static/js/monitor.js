@@ -77,6 +77,16 @@ function update_current_scan_viewport() {
             maintainAspectRatio: false,
             animation: {
                 duration: 0
+            },
+            scales: {
+                y: {
+                    suggestedMin: -6,
+                    suggestedMax: 6
+                },
+                x: {
+                    suggestedMin: -6,
+                    suggestedMax: 6
+                }
             }
         }})
 }
