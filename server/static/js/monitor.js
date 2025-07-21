@@ -13,7 +13,7 @@ function update_current_scan() {
     // Update the scan label
     document.querySelector("#monitor-preview-label-idx").innerText = 
         (activeScans.currentIndex + 1).toString() + "/" + (activeScans.timestamps.length).toString();
-    document.querySelector("#monitor-preview-label-ts").innerText = activeScans.timestamps[currentIndex].ts;
+    document.querySelector("#monitor-preview-label-ts").innerText = activeScans.timestamps[activeScans.currentIndex].ts;
 
     let payload = new URLSearchParams({
         contraption_nickname: activeScans.name,
