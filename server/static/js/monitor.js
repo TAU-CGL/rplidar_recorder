@@ -1,6 +1,13 @@
 var monitorLeftPanel = document.querySelector(".monitor-left-panel");
 var monitorRightPanel = document.querySelector(".monitor-right-panel");
 
+var nextScanButton = document.querySelector("#next-scan");
+nextScanButton.addEventListener("click", event => on_prev_next_scan_click(1, event));
+var prevScanButton = document.querySelector("#prev-scan");
+prevScanButton.addEventListener("click", event => on_prev_next_scan_click(-1, event));
+
+var monitorNoSelection = document.querySelector(".monitor-no-selection-text");
+var monitorViewport = document.querySelector(".monitor-preview-container");
 
 var activeScans = {
     name: "",
@@ -32,9 +39,23 @@ function update_current_scan() {
     }).then(response => {
         response.json().then(data => {
             activeScans.currentScan = data["ranges"];
-            console.log(activeScans);
+            update_current_scan_viewport();
         })
     })
+}
+
+function update_current_scan_viewport() {
+    monitorNoSelection.style.display = 'none';
+    monitorViewport.innerText = activeScans.currentScan;
+}
+
+function on_prev_next_scan_click(dir, event) {
+    activeScans.currentIndex += dir;
+    if (activeScans.currentIndex >= activeScans.timestamps.length)
+        activeScans.currentIndex = activeScans.timestamps.length - 1;
+    if (activeScans.currentIndex < 0)
+        activeScans.currentIndex = 0;
+    update_current_scan();
 }
 
 
