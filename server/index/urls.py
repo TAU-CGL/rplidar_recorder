@@ -7,6 +7,7 @@ urlpatterns = [
     path('api/contraption/scan', new_scan, name='new_scan'),
     path('api/contraption/list', list_contraptions, name='list_contraptions'),
     path('api/contraption/list/scans', list_contraption_scans, name='list_contraption_scans'),
+    path('api/contraption/get/scan', get_contraption_scan, name='get_contraption_scan'),
     path('api/contraption/bag/upload', upload_rosbag, name='upload_rosbag'),
 
 

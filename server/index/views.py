@@ -78,9 +78,24 @@ def list_contraption_scans(request):
         scan_list.append({
             "id": scan.id,
             "timestamp": local_ts.isoformat(),
-            "ranges": scan.ranges
         })
     return JsonResponse(scan_list, status=200, safe=False)
+
+@csrf_exempt
+def get_contraption_scan(request):
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
+    contraption_nickname = request.POST["contraption_nickname"]
+    scan_id = request.POST["scan_id"]
+    conraption = Contraption.objects.filter(nickname=contraption_nickname).first()
+    if not conraption:
+        return JsonResponse({"status": "error", "message": f"Contraption [{contraption_nickname}] not found"}, status=404)
+    scan = LaserScan.objects.filter(contraption=conraption, id=scan_id).first()
+    if not scan:
+        return JsonResponse({"status": "error", "message": f"Scan [{scan_id}] not found for contraption [{contraption_nickname}]"}, status=404)
+    return JsonResponse({
+        "ranges": scan.ranges,
+    }, status=200, safe=False)
 
 
 @csrf_exempt
