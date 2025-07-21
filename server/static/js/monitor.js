@@ -1,5 +1,3 @@
-const { act } = require("react");
-
 var monitorLeftPanel = document.querySelector(".monitor-left-panel");
 var monitorRightPanel = document.querySelector(".monitor-right-panel");
 
