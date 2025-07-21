@@ -1,5 +1,35 @@
+const { act } = require("react");
+
 var monitorLeftPanel = document.querySelector(".monitor-left-panel");
 var monitorRightPanel = document.querySelector(".monitor-right-panel");
+
+
+var activeScans = {
+    name: "",
+    timestamps: [],
+    currentIndex: -1,
+    currentScan: null
+}
+
+function update_current_scan() {
+    let payload = new URLSearchParams({
+        contraption_nickname: activeScans.name,
+        timestamp: activeScans.timestamps[activeScans.currentIndex]
+    }).toString();
+    fetch("/api/contraption/get/scan", {
+        method: "POST",
+        headers: {            
+            "Content-Type": "application/x-www-form-urlencoded"
+        }, 
+        body: payload
+    }).then(response => {
+        response.json().then(data => {
+            activeScans.currentScan = data["ranges"];
+            console.log(activeScans);
+        })
+    })
+}
+
 
 function on_contraption_click(name, event) {
     console.log("Contraption clicked:", name);
@@ -14,8 +44,18 @@ function on_contraption_click(name, event) {
         body: payload
     }).then(response => {
         console.log("Response from contraption scans:", response);
+        response.json().then(data => {
+            activeScans.timestamps = data.map(scan => scan.timestamp);
+            activeScans.timestamps.sort((a, b) => new Date(a) - new Date(b));
+            activeScans.currentIndex = activeScans.timestamps.length - 1;
+            activeScans.name = name;
+            update_current_scan();
+        })
     })
 }
+
+
+
 
 function add_contraption_div(name, lastSeen, online) {
     let contraption = document.createElement("div");
