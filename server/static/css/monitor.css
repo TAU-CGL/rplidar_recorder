@@ -35,6 +35,10 @@
     text-align: center;
 }
 
+.monitor-preview-label {
+    margin-left: 2em;
+}
+
 .monitor-contraption {
     background-color: #EEEEEE;
     margin: 0.5em;
