@@ -52,7 +52,7 @@ function update_current_scan_viewport() {
     let data = {
         datasets: [ {
             label: 'scan',
-            data: [[0,0], [1,1], 2,2]    
+            data: [[0,0], [1,1], [20,2]]    
         }]
     }
 
