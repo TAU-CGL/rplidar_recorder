@@ -10,6 +10,9 @@ var activeScans = {
 }
 
 function update_current_scan() {
+    // Update the scan label
+
+
     let payload = new URLSearchParams({
         contraption_nickname: activeScans.name,
         scan_id: activeScans.timestamps[activeScans.currentIndex].id
