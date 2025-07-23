@@ -100,6 +100,13 @@ def get_contraption_scan(request):
 
 @csrf_exempt
 @require_POST
+def delete_all_scans(request):
+    LaserScan.objects.all().delete()
+    return JsonResponse({"status": "ok"}, status=200)
+
+
+@csrf_exempt
+@require_POST
 def upload_rosbag(request):
     request.upload_handlers.insert(0, TemporaryFileUploadHandler(request))
     uploaded = request.FILES.get("file")
