@@ -35,3 +35,10 @@ class Circle:
     """A circle defined by its center and radius."""
     center: np.ndarray  # shape (2,)
     radius: float
+
+    def representing_polygon(self, num_points: int = 64) -> np.ndarray:
+        """
+        Return a polygonal representation of the circle.
+        """
+        angles = np.linspace(0, 2 * np.pi, num_points, endpoint=False)
+        return self.center + self.radius * np.column_stack((np.cos(angles), np.sin(angles)))
