@@ -49,3 +49,43 @@ def find_best_circle(snapshot: LidarSnapshot, radius: float) -> Circle:
             best_circle = circle
 
     return best_circle if best_circle else Circle(center=np.zeros(2), radius=0.0)
+
+
+def find_best_transform(C1_: Circle, C2_: Circle, C1: Circle, C2: Circle) -> np.ndarray:
+    """
+    Find the best transform that maps C1_ to C2_ based on the original circles C1 and C2.
+    """
+    A = np.stack([C1_.center, C2_.center])
+    B = np.stack([C1.center, C2.center])
+    centroid_A = A.mean(axis=0)
+    centroid_B = B.mean(axis=0)
+    AA = A - centroid_A
+    BB = B - centroid_B
+
+    H = AA.T @ BB
+    U, S, Vt = np.linalg.svd(H)
+    R = Vt.T @ U.T
+    if np.linalg.det(R) < 0:
+        Vt[1, :] *= -1
+        R = Vt.T @ U.T
+
+    t = centroid_B - R @ centroid_A
+    transform = np.eye(3)
+    transform[:2, :2] = R
+    transform[:2, 2] = t
+    return transform
+
+
+def symb_lagrangian():
+    """
+    Symbolic computation of the Lagrangian and its derivatives (Jacobian & Hessian)
+    """
+    import sympy as sp
+
+    ct, st, a, b, l = sp.symbols('ct st a b l')
+    x1, y1, x2, y2 = sp.symbols('x1 y1 x2 y2')
+    x1_, y1_, x2_, y2_ = sp.symbols('x1_ y1_ x2_ y2_')
+    L = 0.5 * (ct * x1_ - st * y1_ + a - x1)**2 + (st * x1_ + ct * y1_ + b - y1)**2 + \
+        0.5 * (ct * x2_ - st * y2_ + a - x2)**2 + (st * x2_ + ct * y2_ + b - y2)**2 + \
+        l * (ct**2 + st**2 - 1)
+    print("Lagrangian:", L)

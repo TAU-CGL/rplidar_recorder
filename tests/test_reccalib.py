@@ -7,7 +7,7 @@ C1 = reccalib.Circle(center=np.array([-0.9, 0.9]), radius=0.3)
 C2 = reccalib.Circle(center=np.array([1.2, 0.5]), radius=0.4)
 q1 = np.array([0.2, 0.6, 0.0])
 q2 = np.array([-1.35, -0.86, 0.71])
-NOISE = 0.005
+NOISE = 0.01
 
 
 def ray_polygon_intersect(poly, origin, direction):
@@ -77,10 +77,14 @@ def test_reccalib_fit_circle_least_squares():
 
 
 if __name__ == "__main__":
+    reccalib.symb_lagrangian()
+
     lidar_q1 = simulate_lidar_snapshot(q1, LAB_POLYGON, C1, C2)
     lidar_q2 = simulate_lidar_snapshot(q2, LAB_POLYGON, C1, C2)
     lidars = [lidar_q1, lidar_q2]
     qs = [q1, q2]
+
+    circles = []
 
     # Draw first q1 lidar
     for lidar, q in zip(lidars, qs):
@@ -88,6 +92,8 @@ if __name__ == "__main__":
         ls = reccalib.LidarSnapshot(points=lidar, device_id="test_device", timestamp=0)
         C1_ = reccalib.find_best_circle(ls, C1.radius)
         C2_ = reccalib.find_best_circle(ls, C2.radius)
+        circles.append(C1_)
+        circles.append(C2_)
 
         plt.plot(lidar[:,0], lidar[:,1], 'bo', markersize=2, label='Lidar q1')
         plt.plot(q[0], q[1], 'ro', markersize=5, label='q1')
@@ -102,3 +108,14 @@ if __name__ == "__main__":
 
     plt.show()
     
+
+    T = np.linalg.inv(reccalib.find_best_transform(*circles))
+    print(T)
+
+    # Draw lidar_q1 as is, but lidar_q2 transformed by T
+    plt.plot(lidar_q1[:,0], lidar_q1[:,1], 'bo', markersize=2, label='Lidar q1')
+    
+    # Write the applied transformation yourself
+    lidar_q2_transformed = np.dot(lidar_q2, T[:2, :2].T) + T[:2, 2]
+    plt.plot(lidar_q2_transformed[:,0], lidar_q2_transformed[:,1], 'ro', markersize=2, label='Transformed Lidar q2')
+    plt.show()
