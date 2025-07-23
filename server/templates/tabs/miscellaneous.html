@@ -11,6 +11,8 @@
 
 <button onclick="deleteAllScans()">Delete All Scans</button>
 
+<h3>Fetch All Recent Scans</h3>
+<button onclick="fetch_all_recent_scans()">Fetch All Recent Scans</button>
 
 <script>
     function sendNewContraption() {
@@ -42,6 +44,26 @@
         })
         .catch(error => {
             alert('Error deleting scans: ' + error);
+        });
+    }
+
+    function fetch_all_recent_scans() {
+        // For each contraption, get the last scan.
+        // Then in console log the results {"dev1": {....}, ...}
+        fetch("/api/contraption/list/scans")
+        .then(response => {
+            return response.json();
+        }
+        ).then(data => {
+            let contraptions = {};
+            data.forEach(scan => {
+                if (!(scan.nickname in contraptions)) {
+                    contraptions[scan.nickname] = [];
+                }
+                contraptions[scan.nickname].push(scan);
+            });
+            console.log(contraptions);
+            alert('Check console for recent scans data');
         });
     }
 </script>
