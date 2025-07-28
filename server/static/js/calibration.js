@@ -80,7 +80,30 @@ async function populate_use_alternative_radius() {
 }
 
 async function fit_circles() {
-    return "Fitting circles...".concat("<br>");
+    let scans = await fetch_recent_scans();
+    let radius = parseFloat(document.getElementById("radius").value);
+    let altRadius = parseFloat(document.getElementById("alternativeRadius").value);
+    let altRadiusDevices = [];
+    let checkboxes = document.querySelectorAll('input[name="contraption"]:checked');
+    checkboxes.forEach(checkbox => {
+        altRadiusDevices.push(checkbox.value);
+    });
+    let payload = new URLSearchParams({
+        scans: JSON.stringify(scans),
+        radius: radius,
+        altRadius: altRadius,
+        altRadiusDevices: JSON.stringify(altRadiusDevices)
+    }).toString();
+
+    let response = await fetch("/api/calibration/fit_circles", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: payload
+    });
+
+    return response.text();
 }
 function fit_circles_with_ui(id) {
     fit_circles().then(result => {
