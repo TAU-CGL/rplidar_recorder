@@ -17,6 +17,9 @@ from datetime import timedelta
 
 from .models import Contraption, LaserScan
 
+import reccalib
+import numpy as np
+
 def teapot(_):
     return HttpResponse("I'm a teapot", status=418)
 
@@ -103,6 +106,31 @@ def get_contraption_scan(request):
 def delete_all_scans(request):
     LaserScan.objects.all().delete()
     return JsonResponse({"status": "ok"}, status=200)
+
+# ------------
+# Calibration
+# ------------
+
+@csrf_exempt
+@require_POST
+def calibration_fit_circles(request):
+    scans = request.POST["scans"] 
+    radius = request.POST["radius"]
+    altRadius = request.POST["altRadius"]
+    altRadiusDevices = request.POST["altRadiusDevices"]
+
+    result = {}
+    for device, scan in scans:
+        ls = reccalib.LidarSnapshot(points=np.array(scan), device_id=device, timestamp=0)
+        r = radius if device not in altRadiusDevices else altRadius
+        circle = reccalib.find_best_circle(ls, r)
+        result[device] = {
+            "center": circle.center.tolist(),
+            "radius": circle.radius,
+        }
+        
+    return JsonResponse(result, status=200, safe=False)
+# -------------------------------------------------------------
 
 
 @csrf_exempt
