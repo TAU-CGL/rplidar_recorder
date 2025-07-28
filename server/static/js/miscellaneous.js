@@ -30,12 +30,11 @@ function deleteAllScans() {
     });
 }
 
-function fetch_all_recent_scans() {
-    fetch('/api/contraption/list')
-        .then(response => response.json().then(data => {
-            let devices = [];
-            data.forEach(dev => devices.push(dev.nickname));
-            devices.sort();
-            console.log(devices);
-    }))
+async function fetch_all_recent_scans() {
+    let response = await fetch('/api/contraption/list');
+    let data = await response.json();
+    let devices = [];
+    data.forEach(dev => devices.push(dev.nickname));
+    devices.sort();
+    console.log(devices);
 }
