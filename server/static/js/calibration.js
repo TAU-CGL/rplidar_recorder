@@ -79,6 +79,16 @@ async function populate_use_alternative_radius() {
     });
 }
 
+async function fit_circles() {
+    return "Fitting circles...".concat("<br>");
+}
+function fit_circles_with_ui(id) {
+    fit_circles().then(result => {
+        let text = document.getElementById("text" + id.toString());
+        text.innerHTML = result.toString();
+    })
+}
+
 // Call populate_use_alternative_radius on page load
 document.addEventListener("DOMContentLoaded", function() {
     populate_use_alternative_radius();
