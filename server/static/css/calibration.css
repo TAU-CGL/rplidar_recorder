@@ -1,6 +1,7 @@
 .contraption-container{
     display:flex;         
     gap:2rem;             
+    margin-top: 1.5rem;
 }
 
 .contraption{
