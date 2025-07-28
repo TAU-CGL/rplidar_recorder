@@ -15,22 +15,29 @@
 
 <h3>Fit Circles</h3>
 
-<!-- In a single line, have radius: [text input] alternativeRadius: [text input] -->
 <div class="form-inline">
     <label for="radius">Radius:</label>
     <input type="number" id="radius" name="radius" value="0.15" step="0.01" min="0.01">
     <label for="alternativeRadius">Alternative Radius:</label>
     <input type="number" id="alternativeRadius" name="alternativeRadius" value="0.145" step="0.01" min="0.01">
     
-    
-    <!-- // Here will be a list of contraptions with checkboxes that signal whether the alternativeRadius should be used. It will be populated form JS -->
     <label for="useAlternativeRadius">Use Alternative Radius:</label>
     <span id="contraption-checkboxes">
-        <!-- Checkboxes will be populated here, but an example for a label checkbox pair would be: -->
-        <!-- <label><input type="checkbox" name="contraption1" value="1"> dev1 </label> -->
     </span>
 </div>
 
+<div class="contraption-container">
+    <div class="contraption" id="contraption1">
+        <h4>Circle #1</h4>
+        <button class="fit-button" data-contraption="1">Fit</button>
+        <textarea id="text1" rows="10" cols="50"></textarea>
+    </div>
+    <div class="contraption" id="contraption2">
+        <h4>Circle #2</h4>
+        <button class="fit-button" data-contraption="2">Fit</button>
+        <textarea id="text2" rows="10" cols="50"></textarea>
+    </div>
+</div>
 
 
 <script src="/static/js/calibration.js"></script>
