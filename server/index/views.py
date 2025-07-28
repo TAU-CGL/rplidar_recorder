@@ -120,7 +120,7 @@ def calibration_fit_circles(request):
     altRadiusDevices = json.loads(request.POST["altRadiusDevices"])
 
     result = {}
-    for device, scan in json.loads(scans):
+    for device, scan in json.loads(scans).items():
         ls = reccalib.LidarSnapshot(points=np.array(scan), device_id=device, timestamp=0)
         r = radius if device not in altRadiusDevices else altRadius
         circle = reccalib.find_best_circle(ls, r)
