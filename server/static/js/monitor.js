@@ -169,7 +169,6 @@ function periodic_update() {
     .then(response => {
         return response.json();
     }).then(data => {
-        console.log(data);
         populate_contraptions(data);
     });
 }

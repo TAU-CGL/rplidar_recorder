@@ -115,12 +115,12 @@ def delete_all_scans(request):
 @require_POST
 def calibration_fit_circles(request):
     scans = request.POST["scans"] 
-    radius = request.POST["radius"]
-    altRadius = request.POST["altRadius"]
-    altRadiusDevices = request.POST["altRadiusDevices"]
+    radius = float(request.POST["radius"])
+    altRadius = float(request.POST["altRadius"])
+    altRadiusDevices = json.loads(request.POST["altRadiusDevices"])
 
     result = {}
-    for device, scan in scans:
+    for device, scan in json.loads(scans):
         ls = reccalib.LidarSnapshot(points=np.array(scan), device_id=device, timestamp=0)
         r = radius if device not in altRadiusDevices else altRadius
         circle = reccalib.find_best_circle(ls, r)
