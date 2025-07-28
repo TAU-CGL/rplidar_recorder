@@ -4,5 +4,5 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reccalib"
-version = "0.0.3"
+version = "0.0.4"
 description = "RPLIDAR-recorder calibration utils"
