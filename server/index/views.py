@@ -141,7 +141,7 @@ def calibration_visualize_fit_circles(request):
 
     # Use matplotlib to draw point clouds and the circle
     # Append all different devices to same plot, as one long column
-    figure, axis = plt.subplots(len(scans), 1)
+    figure, axis = plt.subplots(len(scans), 1, figsize=(10, 5 * 30))
     for i, device in enumerate(scans):
         scan = np.array(scans[device])
         center = np.array(circles[device]["center"])
