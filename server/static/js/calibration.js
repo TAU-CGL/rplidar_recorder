@@ -1,0 +1,60 @@
+async function fetch_recent_scans() {
+    let response = await fetch('/api/contraption/list');
+    let data = await response.json();
+    let devices = [];
+    data.forEach(dev => devices.push(dev.nickname));
+    devices.sort();
+
+    let result = {};
+    
+    for(let i = 0; i < devices.length; i++) {
+        let device = devices[i];
+
+        // Fetch all timestamps and find out which was is most recent
+        let payload = new URLSearchParams({contraption_nickname: device}).toString();
+        let response = await fetch("/api/contraption/list/scans", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: payload
+        });
+        let data = await response.json();
+        let timestamps = data.map(scan => new Object({ts: scan.timestamp, id: scan.id}));
+        timestamps.sort((a, b) => new Date(a.ts) - new Date(b.ts));
+        let lastTimestamp = timestamps[timestamps.length - 1];
+        console.log(lastTimestamp);
+
+        // Fetch the most recent timestamp's data
+        payload = new URLSearchParams({
+            contraption_nickname: device,
+            scan_id: lastTimestamp.id
+        }).toString();
+        response = await fetch("/api/contraption/get/scan", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: payload
+        });
+        data = await response.json();
+        let ranges = data["ranges"];
+        
+        // Convert ranges to points
+        let rawScan = JSON.parse(ranges.replaceAll("\'", "\"").replaceAll("inf", "-1"));
+        let points = [];
+        let N = rawScan.ranges.length;
+        for (let i = 0; i < N; i++) {
+            let theta = i / (N-1) * 2 * Math.PI;
+            let val = rawScan.ranges[i];
+            if (val < 0) continue;
+            let x = val * Math.cos(theta);
+            let y = val * Math.sin(theta);
+            points.push([x, y])
+        }
+
+        result[device] = points;
+    }
+
+    return result;
+}
