@@ -33,6 +33,8 @@ function deleteAllScans() {
 function fetch_all_recent_scans() {
     fetch('/api/contraption/list')
         .then(response => response.json().then(data => {
-            console.log(data);
+            let devices = [];
+            data.forEach(dev => devices.push(dev.nickname));
+            console.log(devices);
     }))
 }
