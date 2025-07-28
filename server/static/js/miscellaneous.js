@@ -36,6 +36,8 @@ async function fetch_all_recent_scans() {
     let devices = [];
     data.forEach(dev => devices.push(dev.nickname));
     devices.sort();
+
+    let result = {};
     
     for(let i = 0; i < devices.length; i++) {
         let device = devices[i];
@@ -69,6 +71,22 @@ async function fetch_all_recent_scans() {
         });
         data = await response.json();
         let ranges = data["ranges"];
-        console.log(data);
+        
+        // Convert ranges to points
+        let rawScan = JSON.parse(ranges.replaceAll("\'", "\"").replaceAll("inf", "-1"));
+        let points = [];
+        let N = rawScan.ranges.length;
+        for (let i = 0; i < N; i++) {
+            let theta = i / (N-1) * 2 * Math.PI;
+            let val = rawScan.ranges[i];
+            if (val < 0) continue;
+            let x = val * Math.cos(theta);
+            let y = val * Math.sin(theta);
+            points.push([x, y])
+        }
+
+        result[device] = points;
     }
+
+    console.log(result);
 }
