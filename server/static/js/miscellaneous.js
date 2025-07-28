@@ -35,6 +35,7 @@ function fetch_all_recent_scans() {
         .then(response => response.json().then(data => {
             let devices = [];
             data.forEach(dev => devices.push(dev.nickname));
+            devices.sort();
             console.log(devices);
     }))
 }
