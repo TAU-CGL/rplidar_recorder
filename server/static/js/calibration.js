@@ -1,10 +1,14 @@
-async function fetch_recent_scans() {
+async function get_device_list() {
     let response = await fetch('/api/contraption/list');
     let data = await response.json();
     let devices = [];
     data.forEach(dev => devices.push(dev.nickname));
     devices.sort();
+    return devices;
+}
 
+async function fetch_recent_scans() {
+    let devices = await get_device_list();
     let result = {};
     
     for(let i = 0; i < devices.length; i++) {
@@ -58,3 +62,24 @@ async function fetch_recent_scans() {
 
     return result;
 }
+
+async function populate_use_alternative_radius() {
+    let devices = await get_device_list();
+    let div = document.getElementById("contraption-checkboxes");
+    devices.forEach(device => {
+        let label = document.createElement("label");
+        let checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.name = "contraption";
+        checkbox.value = device;
+        checkbox.checked = false; // Default to unchecked
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(` ${device} `));
+        div.appendChild(label);
+    });
+}
+
+// Call populate_use_alternative_radius on page load
+document.addEventListener("DOMContentLoaded", function() {
+    populate_use_alternative_radius();
+});
