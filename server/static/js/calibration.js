@@ -85,7 +85,7 @@ async function fit_circles() {
 function fit_circles_with_ui(id) {
     fit_circles().then(result => {
         let text = document.getElementById("text" + id.toString());
-        text.innerHTML = result.toString();
+        text.value = result.toString();
     })
 }
 
