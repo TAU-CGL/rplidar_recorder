@@ -10,6 +10,6 @@ urlpatterns = [
     path('api/contraption/list/scans', list_contraption_scans, name='list_contraption_scans'),
     path('api/contraption/get/scan', get_contraption_scan, name='get_contraption_scan'),
     path('api/contraption/bag/upload', upload_rosbag, name='upload_rosbag'),
-    # path('api/calibration/fit_circles', calibration_fit_circles, name='calibration_fit_circles'),
+    path('api/calibration/fit_circles', calibration_fit_circles, name='calibration_fit_circles'),
     path('teapot', teapot, name='teapot'),
 ]
