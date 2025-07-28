@@ -88,5 +88,15 @@ async function fetch_all_recent_scans() {
         result[device] = points;
     }
 
-    console.log(result);
+    const isoTime = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    const filename = `scans_${isoTime}.json`;
+    const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
+    
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
