@@ -12,7 +12,7 @@ urlpatterns = [
     path('api/contraption/bag/upload', upload_rosbag, name='upload_rosbag'),
 
     path('api/calibration/fit_circles', calibration_fit_circles, name='calibration_fit_circles'),
-    path('api/calibration/visualize_fit_circles', calibration_visualize_fit_circles, name='calibration_visualize_circles'),
+    path('api/calibration/fit_circles/visualize', calibration_visualize_fit_circles, name='calibration_visualize_circles'),
 
     path('teapot', teapot, name='teapot'),
 ]

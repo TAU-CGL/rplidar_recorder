@@ -112,6 +112,29 @@ function fit_circles_with_ui(id) {
     })
 }
 
+async function visualize_fit_circles(id) {
+    let scans = await fetch_recent_scans();
+    let circles = document.getElementById("text" + id.toString()).value;
+    let payload = new URLSearchParams({
+        scans: JSON.stringify(scans),
+        circles: circles
+    }).toString();
+    let response = await fetch("/api/calibration/fit_circles/visualize", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: payload
+    });
+    response.blob().then(blob => {
+        let img = document.getElementById("image" + id.toString());
+        img.src = URL.createObjectURL(blob);
+        img.onload = function() {
+            URL.revokeObjectURL(img.src); // Clean up the object URL
+        };
+    });
+}
+
 // Call populate_use_alternative_radius on page load
 document.addEventListener("DOMContentLoaded", function() {
     populate_use_alternative_radius();
