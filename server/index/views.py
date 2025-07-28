@@ -17,8 +17,10 @@ from datetime import timedelta
 
 from .models import Contraption, LaserScan
 
+import cv2
 import reccalib
 import numpy as np
+import matplotlib.pyplot as plt
 
 def teapot(_):
     return HttpResponse("I'm a teapot", status=418)
@@ -130,6 +132,34 @@ def calibration_fit_circles(request):
         }
         
     return JsonResponse(result, status=200, safe=False)
+
+@csrf_exempt
+@require_POST
+def calibration_visualize_fit_circles(request):
+    scans = json.loads(request.POST["scans"])
+    circles = json.loads(request.POST["circles"])
+
+    # Use matplotlib to draw point clouds and the circle
+    # Append all different devices to same plot, as one long column
+    figure, axis = plt.subplots(len(scans), 1)
+    for i, device in enumerate(scans):
+        scan = np.array(scans[device])
+        center = np.array(circles[device]["center"])
+        radius = circles[device]["radius"]
+
+        axis[i].scatter(scan[:, 0], scan[:, 1], s=1)
+        circle = plt.Circle(center, radius, color='r', fill=False)
+        axis[i].add_patch(circle)
+        axis[i].set_title(f"Device: {device}")
+    
+    # Get numpy array that is the image of the plot
+    figure.canvas.draw()
+    image = np.asarray(figure.canvas.renderer.buffer_rgba())[:,:,:3]
+    plt.close() 
+    _, image = cv2.imencode('.png', image)
+
+    return HttpResponse(image.tobytes(), content_type='image/png')
+
 # -------------------------------------------------------------
 
 
