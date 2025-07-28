@@ -41,7 +41,7 @@ def find_best_circle(snapshot: LidarSnapshot, radius: float) -> Circle:
         
         circle = fit_circle_least_squares(LidarSnapshot(snapshot.device_id, snapshot.timestamp, cluster_points))
         # Error should be as close the the given radius as possible, but points should have low variance
-        error = abs(circle.radius - radius) + 0.5 * np.std(np.linalg.norm(cluster_points - circle.center, axis=1))
+        error = abs(circle.radius - radius) + 0.25 * np.std(np.linalg.norm(cluster_points - circle.center, axis=1))
 
         
         if error < best_error:
