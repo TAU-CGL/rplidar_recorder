@@ -26,7 +26,7 @@ def find_best_circle(snapshot: LidarSnapshot, radius: float) -> Circle:
     from sklearn.cluster import DBSCAN
 
     # Cluster points using DBSCAN
-    clustering = DBSCAN(eps=0.1, min_samples=5).fit(snapshot.points)
+    clustering = DBSCAN(eps=0.05, min_samples=3).fit(snapshot.points)
     labels = clustering.labels_
 
     best_circle = None
@@ -41,7 +41,7 @@ def find_best_circle(snapshot: LidarSnapshot, radius: float) -> Circle:
         
         circle = fit_circle_least_squares(LidarSnapshot(snapshot.device_id, snapshot.timestamp, cluster_points))
         # Error should be as close the the given radius as possible, but points should have low variance
-        error = abs(circle.radius - radius) + 0.5 * np.std(np.linalg.norm(cluster_points - circle.center, axis=1))
+        error = abs(circle.radius - radius) + 0.25 * np.std(np.linalg.norm(cluster_points - circle.center, axis=1))
 
         
         if error < best_error:
