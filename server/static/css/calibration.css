@@ -1,0 +1,13 @@
+.contraption-container{
+    display:flex;         
+    gap:2rem;             
+}
+
+.contraption{
+    display:flex;
+    flex-direction:column; 
+    flex:1 1 0;            
+}
+
+.contraption h4{ margin:0 0 .5rem; }
+.fit-button     { margin-bottom:.5rem; }
