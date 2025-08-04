@@ -153,21 +153,21 @@ def rosbag_to_pcd_sftp(remotepath: str):
 
 
 if __name__ == "__main__":
-    
-    unnpzed_files = get_unnpzed_files()
-    print("Unnpzed files:")
-    for file in unnpzed_files:
-        print(file)
-    if not unnpzed_files:
-        print("No unnpzed files found.")
-    else:
-        print(f"Total: {len(unnpzed_files)} unnpzed files found.")
+    while True:
+        unnpzed_files = get_unnpzed_files()
+        print("Unnpzed files:")
+        for file in unnpzed_files:
+            print(file)
+        if not unnpzed_files:
+            print("No unnpzed files found.")
+        else:
+            print(f"Total: {len(unnpzed_files)} unnpzed files found.")
 
-    for remotepath in tqdm.tqdm(unnpzed_files, desc="Converting unnpzed files"):
-        try:
-            rosbag_to_pcd_sftp(remotepath)
-        except Exception as e:
-            print(f"Error processing {remotepath}: {e}")
-            continue
+        for remotepath in tqdm.tqdm(unnpzed_files, desc="Converting unnpzed files"):
+            try:
+                rosbag_to_pcd_sftp(remotepath)
+            except Exception as e:
+                print(f"Error processing {remotepath}: {e}")
+                continue
 
-    print("All done.")
+        print("All done.")
