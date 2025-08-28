@@ -181,7 +181,7 @@ def calibrate(request):
             if dev1 == dev2:
                 continue
             T = reccalib.find_best_transform(*circles[dev1], *circles[dev2])
-            result[dev1][dev2] = T
+            result[dev1][dev2] = T.tolist()
     return JsonResponse(result, status=200)
 
 # -------------------------------------------------------------
