@@ -176,11 +176,12 @@ def calibrate(request):
 
     result = {}
     for dev1 in devices:
+        result[dev1] = {}
         for dev2 in devices:
             if dev1 == dev2:
                 continue
             T = reccalib.find_best_transform(*circles[dev1], *circles[dev2])
-            result[(dev1, dev2)] = T
+            result[dev1][dev2] = T
     return JsonResponse(result, status=200)
 
 # -------------------------------------------------------------
