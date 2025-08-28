@@ -160,6 +160,29 @@ def calibration_visualize_fit_circles(request):
 
     return HttpResponse(image.tobytes(), content_type='image/png')
 
+@csrf_exempt
+@require_POST
+def calibrate(request):
+    circle1 = json.loads(request.POST["circle1"])
+    circle2 = json.loads(request.POST["circle2"])
+    devices = list(circle1.keys())
+    circles = {}
+    for dev in devices:
+        c1 = circle1[dev]
+        c1 = reccalib.Circle(center=np.array(c1['center']), radius=c1['radius'])
+        c2 = circle2[dev]
+        c2 = reccalib.Circle(center=np.array(c2['center']), radius=c2['radius'])
+        circles[dev] = (c1, c2)
+
+    result = {}
+    for dev1 in devices:
+        for dev2 in devices:
+            if dev1 == dev2:
+                continue
+            T = reccalib.find_best_transform(*circles[dev1], *circles[dev2])
+            result[(dev1, dev2)] = T
+    return JsonResponse(result, status=200)
+
 # -------------------------------------------------------------
 
 
