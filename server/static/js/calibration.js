@@ -156,6 +156,29 @@ async function calibrate() {
     text.value = await response.text();
 }
 
+async function visualize_calibration() {
+    let scans = await fetch_recent_scans();
+    let calibration = document.getElementById("calibration-text").value;
+    let payload = new URLSearchParams({
+        scans: JSON.stringify(scans),
+        calibration: calibration
+    }).toString();
+    let response = await fetch("/api/calibration/visualize", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: payload
+    });
+    response.blob().then(blob => {
+        let img = document.getElementById("calibration-image");
+        img.src = URL.createObjectURL(blob);
+        img.onload = function() {
+            URL.revokeObjectURL(img.src); // Clean up the object URL
+        };
+    });
+}
+
 // Call populate_use_alternative_radius on page load
 document.addEventListener("DOMContentLoaded", function() {
     populate_use_alternative_radius();
