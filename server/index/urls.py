@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/calibration/fit_circles', calibration_fit_circles, name='calibration_fit_circles'),
     path('api/calibration/fit_circles/visualize', calibration_visualize_fit_circles, name='calibration_visualize_circles'),
     path('api/calibration/calibrate', calibrate, name='calibrate'),
+    path('api/calibration/calibrate/visualize', visualize_calibration, name='visualize_calibration'),
 
     path('teapot', teapot, name='teapot'),
 ]
