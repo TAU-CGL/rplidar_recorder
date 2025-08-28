@@ -127,11 +127,15 @@ async function visualize_fit_circles(id) {
         body: payload
     });
     response.blob().then(blob => {
-        let img = document.getElementById("image" + id.toString());
-        img.src = URL.createObjectURL(blob);
-        img.onload = function() {
-            URL.revokeObjectURL(img.src); // Clean up the object URL
-        };
+        // let img = document.getElementById("image" + id.toString());
+        // img.src = URL.createObjectURL(blob);
+        // img.onload = function() {
+        //     URL.revokeObjectURL(img.src); // Clean up the object URL
+        // };
+        let url = URL.createObjectURL(blob);
+        window.open(url, "_blank");  // Opens the image in a new tab
+        // optional cleanup
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
     });
 }
 
@@ -171,11 +175,15 @@ async function visualize_calibration() {
         body: payload
     });
     response.blob().then(blob => {
-        let img = document.getElementById("calibration-image");
-        img.src = URL.createObjectURL(blob);
-        img.onload = function() {
-            URL.revokeObjectURL(img.src); // Clean up the object URL
-        };
+        // let img = document.getElementById("calibration-image");
+        // img.src = URL.createObjectURL(blob);
+        // img.onload = function() {
+        //     URL.revokeObjectURL(img.src); // Clean up the object URL
+        // };
+        let url = URL.createObjectURL(blob);
+        window.open(url, "_blank");  // Opens the image in a new tab
+        // optional cleanup
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
     });
 }
 
