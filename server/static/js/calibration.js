@@ -135,6 +135,27 @@ async function visualize_fit_circles(id) {
     });
 }
 
+async function calibrate() {
+    let circle1 = document.getElementById("text1").value;
+    let circle2 = document.getElementById("text2").value;
+
+    let payload = new URLSearchParams({
+        circle1: circle1,
+        circle2: circle2
+    }).toString();
+
+    let response = await fetch("/api/calibration/calibrate", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: payload
+    });
+
+    let text = document.getElementById("calibration-text");
+    text.value = await response.text();
+}
+
 // Call populate_use_alternative_radius on page load
 document.addEventListener("DOMContentLoaded", function() {
     populate_use_alternative_radius();
