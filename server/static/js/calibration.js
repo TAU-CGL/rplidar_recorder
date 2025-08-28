@@ -163,7 +163,7 @@ async function visualize_calibration() {
         scans: JSON.stringify(scans),
         calibration: calibration
     }).toString();
-    let response = await fetch("/api/calibrate/visualize", {
+    let response = await fetch("/api/calibration/calibrate/visualize", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
