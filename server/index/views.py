@@ -197,10 +197,13 @@ def visualize_calibration(request):
     axis.plot(lidars[devices[0]][:,0], lidars[devices[0]][:,1], 'bo', markersize=2)
 
     for dev in devices[1:]:
-        T = np.array(calibration[dev][devices[0]])
-        transformed = np.dot(lidars[dev], T[:2, :2].T) + T[:2, 2]
-        axis.plot(transformed[:,0], transformed[:,1], 'ro', markersize=2)
-    
+        try:
+            T = np.array(calibration[dev][devices[0]])
+            transformed = np.dot(lidars[dev], T[:2, :2].T) + T[:2, 2]
+            axis.plot(transformed[:,0], transformed[:,1], 'ro', markersize=2)
+        except KeyError:
+            continue
+
     figure.canvas.draw()
     image = np.asarray(figure.canvas.renderer.buffer_rgba())[:,:,:3]
     plt.close()
