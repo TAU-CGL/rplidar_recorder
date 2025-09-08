@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import cv2
+from scipy.spatial.distance import cdist
 
 
 RECORDING_ROOT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Lab446"
@@ -145,6 +146,99 @@ def add_transformed_points(merged_df, transforms):
     
     return merged_df
 
+def simple_icp(source_points, target_points, max_iterations=10, tolerance=1e-6):
+    """Simple ICP implementation to refine transformation between point clouds"""
+    if len(source_points) == 0 or len(target_points) == 0:
+        return np.eye(3)
+    
+    # Subsample points if too many for speed
+    if len(source_points) > 1000:
+        indices = np.random.choice(len(source_points), 1000, replace=False)
+        source_points = source_points[indices]
+    if len(target_points) > 1000:
+        indices = np.random.choice(len(target_points), 1000, replace=False)
+        target_points = target_points[indices]
+    
+    current_source = source_points.copy()
+    prev_error = float('inf')
+    
+    for iteration in range(max_iterations):
+        # Find closest points
+        distances = cdist(current_source, target_points)
+        closest_indices = np.argmin(distances, axis=1)
+        closest_target_points = target_points[closest_indices]
+        
+        # Compute centroids
+        source_centroid = np.mean(current_source, axis=0)
+        target_centroid = np.mean(closest_target_points, axis=0)
+        
+        # Center the points
+        source_centered = current_source - source_centroid
+        target_centered = closest_target_points - target_centroid
+        
+        # Compute rotation using SVD
+        H = source_centered.T @ target_centered
+        U, _, Vt = np.linalg.svd(H)
+        R = Vt.T @ U.T
+        
+        # Ensure proper rotation matrix
+        if np.linalg.det(R) < 0:
+            Vt[-1, :] *= -1
+            R = Vt.T @ U.T
+        
+        # Compute translation
+        t = target_centroid - R @ source_centroid
+        
+        # Apply transformation
+        current_source = (R @ current_source.T).T + t
+        
+        # Check convergence
+        error = np.mean(np.min(cdist(current_source, target_points), axis=1))
+        if abs(prev_error - error) < tolerance:
+            break
+        prev_error = error
+    
+    # Build homogeneous transformation matrix
+    transform = np.eye(3)
+    transform[:2, :2] = R
+    transform[:2, 2] = t
+    
+    return transform
+
+def refine_transforms_with_icp(merged_df, transforms):
+    """Refine transformation matrices using ICP on the first frame"""
+    pcd_columns = [col for col in merged_df.columns if col.startswith('pcd_') and not col.endswith('_transformed')]
+    devices = [col.replace('pcd_', '') for col in pcd_columns]
+    devices = sorted(devices)
+    
+    if len(devices) < 2:
+        return transforms
+    
+    reference_device = devices[0]
+    first_row = merged_df.iloc[0]
+    target_points = first_row[f'pcd_{reference_device}']
+    
+    refined_transforms = transforms.copy()
+    
+    print("Refining transforms with ICP...")
+    for device in devices[1:]:
+        if device in transforms and reference_device in transforms[device]:
+            # Apply initial transform
+            source_points = first_row[f'pcd_{device}']
+            initial_transform = np.array(transforms[device][reference_device])
+            transformed_source = transform_points(source_points, initial_transform)
+            
+            # Run ICP to refine
+            icp_refinement = simple_icp(transformed_source, target_points)
+            
+            # Combine transforms
+            combined_transform = icp_refinement @ initial_transform
+            refined_transforms[device][reference_device] = combined_transform.tolist()
+            
+            print(f"Refined transform for {device} -> {reference_device}")
+    
+    return refined_transforms
+
 def create_video_from_dataframe(merged_df, output_path="video.mp4", fps=15):
     transformed_columns = [col for col in merged_df.columns if col.endswith('_transformed')]
     
@@ -181,10 +275,10 @@ def create_video_from_dataframe(merged_df, output_path="video.mp4", fps=15):
     
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     out = cv2.VideoWriter(output_path, fourcc, fps, (1000, 1000))
-    
-    # Skip every 4th frame to speed up rendering (4x faster)
-    frame_indices = range(0, len(merged_df), 4)
-    print(f"Creating video with {len(frame_indices)} frames (skipping every 4th frame)...")
+
+    # Skip every 2nd frame to speed up rendering (2x faster)
+    frame_indices = range(0, len(merged_df), 2)
+    print(f"Creating video with {len(frame_indices)} frames (skipping every 2nd frame)...")
     for frame_idx, idx in tqdm.tqdm(enumerate(frame_indices), total=len(frame_indices)):
         row = merged_df.iloc[idx]
         ax.clear()
@@ -225,16 +319,21 @@ if __name__ == "__main__":
     with open("all_files.json", 'r') as f:
         all_files = json.load(f)
     intersecting_tuples = finds_all_intersecting_tuples(all_files)
+    intersecting_tuples = sorted(intersecting_tuples, key=lambda x: x[0])
     print(f"Found {len(intersecting_tuples)} intersecting tuples.")
-    print(intersecting_tuples[0])
 
     with open(TRANSFORMS_FILE, 'r') as f:
         transforms = json.load(f)
 
-    DATA_IDX = 20800
-
+    DATA_IDX = 20670
+    print(intersecting_tuples[DATA_IDX])
     data = read_npzs_from_tuple(intersecting_tuples[DATA_IDX])
     merged_df = merge_npzs(data)
-    merged_df = add_transformed_points(merged_df, transforms)
+    
+    # Refine transforms using ICP on first frame
+    refined_transforms = refine_transforms_with_icp(merged_df, transforms)
+    
+    # Apply refined transforms to all timestamps
+    merged_df = add_transformed_points(merged_df, refined_transforms)
     print(merged_df)    
     create_video_from_dataframe(merged_df, "video.mp4")
