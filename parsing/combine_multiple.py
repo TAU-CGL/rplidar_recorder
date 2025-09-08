@@ -10,6 +10,8 @@ import itertools
 import tqdm
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import cv2
 
 
 RECORDING_ROOT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Lab446"
@@ -90,17 +92,16 @@ def read_npzs_from_tuple(npz_tuple):
         dfs.append(df)
     return dfs
 
-def ranges_to_points(ranges):
-    points = []
-    N = len(ranges)
-    for i in range(N):
-        if np.isnan(ranges[i]) or ranges[i] < 0:
-            continue
-        theta = (i / (N-1)) * 2 * np.pi
-        x = ranges[i] * np.cos(theta)
-        y = ranges[i] * np.sin(theta)
-        points.append((x, y))
-    return np.array(points)
+def ranges_to_points(points):
+    points = np.array(points)
+    if points.ndim == 1 and len(points) == 0:
+        return np.array([]).reshape(0, 2)
+    if points.ndim == 1:
+        points = points.reshape(-1, 2)
+    # Filter out NaN and Inf values
+    valid_mask = ~(np.isnan(points).any(axis=1) | np.isinf(points).any(axis=1))
+    points = points[valid_mask]
+    return -points[:, [0, 1]]
 
 def merge_npzs(dfs):
     merged_df = dfs[0]
@@ -112,20 +113,128 @@ def merge_npzs(dfs):
     
     return merged_df
 
-def transform_points(points, transforms):
-    # TODO
+def transform_points(points, transform_matrix):
+    if len(points) == 0:
+        return points
+    
+    transform_matrix = np.array(transform_matrix)
+    # Try different transformation approach - maybe matrix needs to be transposed
+    homogeneous_points = np.hstack([points, np.ones((points.shape[0], 1))])
+    transformed = np.dot(transform_matrix, homogeneous_points.T).T
+    return transformed[:, :2]
 
 def add_transformed_points(merged_df, transforms):
-    # TODO
+    pcd_columns = [col for col in merged_df.columns if col.startswith('pcd_')]
+    devices = [col.replace('pcd_', '') for col in pcd_columns]
+    devices = sorted(devices)
+    
+    if not devices:
+        return merged_df
+    
+    reference_device = devices[0]
+    merged_df[f'pcd_{reference_device}_transformed'] = merged_df[f'pcd_{reference_device}']
+    
+    for device in devices[1:]:
+        if device in transforms and reference_device in transforms[device]:
+            transform_matrix = np.array(transforms[device][reference_device])
+            merged_df[f'pcd_{device}_transformed'] = merged_df[f'pcd_{device}'].apply(
+                lambda points: transform_points(points, transform_matrix)
+            )
+        else:
+            merged_df[f'pcd_{device}_transformed'] = merged_df[f'pcd_{device}']
+    
+    return merged_df
+
+def create_video_from_dataframe(merged_df, output_path="video.mp4", fps=15):
+    transformed_columns = [col for col in merged_df.columns if col.endswith('_transformed')]
+    
+    if not transformed_columns:
+        print("No transformed point cloud columns found!")
+        return
+    
+    all_points = []
+    for _, row in merged_df.iterrows():
+        frame_points = []
+        for col in transformed_columns:
+            points = row[col]
+            if len(points) > 0:
+                frame_points.extend(points)
+        if frame_points:
+            all_points.extend(frame_points)
+    
+    if not all_points:
+        print("No points found to create video!")
+        return
+        
+    all_points = np.array(all_points)
+    x_min, x_max = all_points[:, 0].min(), all_points[:, 0].max()
+    y_min, y_max = all_points[:, 1].min(), all_points[:, 1].max()
+    
+    margin = 0.5
+    x_min, x_max = x_min - margin, x_max + margin
+    y_min, y_max = y_min - margin, y_max + margin
+
+    x_min, x_max = -2.5, 5.5
+    y_min, y_max = -4, 4
+
+    fig, ax = plt.subplots(figsize=(10, 10))
+    
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    out = cv2.VideoWriter(output_path, fourcc, fps, (1000, 1000))
+    
+    # Skip every 4th frame to speed up rendering (4x faster)
+    frame_indices = range(0, len(merged_df), 4)
+    print(f"Creating video with {len(frame_indices)} frames (skipping every 4th frame)...")
+    for frame_idx, idx in tqdm.tqdm(enumerate(frame_indices), total=len(frame_indices)):
+        row = merged_df.iloc[idx]
+        ax.clear()
+        ax.set_xlim(x_min, x_max)
+        ax.set_ylim(y_min, y_max)
+        ax.set_aspect('equal')
+        ax.set_title(f'Combined Point Cloud - Frame {frame_idx}')
+        
+        colors = ['red', 'blue', 'green', 'orange', 'purple']
+        color_idx = 0
+        
+        for col in transformed_columns:
+            points = row[col]
+            if len(points) > 0:
+                ax.scatter(points[:, 0], points[:, 1], 
+                          c=colors[color_idx % len(colors)], s=1, alpha=0.7,
+                          label=col.replace('pcd_', '').replace('_transformed', ''))
+                color_idx += 1
+        
+        ax.legend()
+        
+        fig.canvas.draw()
+        image = np.asarray(fig.canvas.renderer.buffer_rgba())[:,:,:3]
+        img_bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        img_resized = cv2.resize(img_bgr, (1000, 1000))
+        out.write(img_resized)
+    
+    out.release()
+    plt.close(fig)
+    print(f"Video saved to {output_path}")
 
 if __name__ == "__main__":
-    print("Getting all recording files...")
-    all_files = get_all_recording_files(RECORDING_ROOT_DIR)
-    print("Done.")
+    # print("Getting all recording files...")
+    # all_files = get_all_recording_files(RECORDING_ROOT_DIR)
+    # with open("all_files.json", 'w') as f:
+    #     json.dump(all_files, f, indent=2)
+    # print("Done.")
+    with open("all_files.json", 'r') as f:
+        all_files = json.load(f)
     intersecting_tuples = finds_all_intersecting_tuples(all_files)
     print(f"Found {len(intersecting_tuples)} intersecting tuples.")
     print(intersecting_tuples[0])
 
-    data = read_npzs_from_tuple(intersecting_tuples[0])
+    with open(TRANSFORMS_FILE, 'r') as f:
+        transforms = json.load(f)
+
+    DATA_IDX = 20800
+
+    data = read_npzs_from_tuple(intersecting_tuples[DATA_IDX])
     merged_df = merge_npzs(data)
-    print(merged_df)
+    merged_df = add_transformed_points(merged_df, transforms)
+    print(merged_df)    
+    create_video_from_dataframe(merged_df, "video.mp4")
