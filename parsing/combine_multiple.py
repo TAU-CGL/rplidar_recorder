@@ -16,6 +16,7 @@ from scipy.spatial.distance import cdist
 
 
 RECORDING_ROOT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Lab446"
+OUT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Lab446_Processed"
 TRANSFORMS_FILE = "scripts/raw/lab446a_20250828_1424/transforms.json"
 UUID_TO_DEV = {
     "8dc0b0fc-cb63-4f6c-ad49-b6f27673fef9": "dev1",
@@ -146,7 +147,7 @@ def add_transformed_points(merged_df, transforms):
     
     return merged_df
 
-def simple_icp(source_points, target_points, max_iterations=10, tolerance=1e-6):
+def simple_icp(source_points, target_points, max_iterations=50, tolerance=1e-7):
     """Simple ICP implementation to refine transformation between point clouds"""
     if len(source_points) == 0 or len(target_points) == 0:
         return np.eye(3)
@@ -277,7 +278,7 @@ def create_video_from_dataframe(merged_df, output_path="video.mp4", fps=15):
     out = cv2.VideoWriter(output_path, fourcc, fps, (1000, 1000))
 
     # Skip every 2nd frame to speed up rendering (2x faster)
-    frame_indices = range(0, len(merged_df), 2)
+    frame_indices = range(0, len(merged_df), 20)
     print(f"Creating video with {len(frame_indices)} frames (skipping every 2nd frame)...")
     for frame_idx, idx in tqdm.tqdm(enumerate(frame_indices), total=len(frame_indices)):
         row = merged_df.iloc[idx]
@@ -310,6 +311,54 @@ def create_video_from_dataframe(merged_df, output_path="video.mp4", fps=15):
     plt.close(fig)
     print(f"Video saved to {output_path}")
 
+def save_batch_dataframes(merged_dfs_batch, batch_idx, output_dir):
+    """Save a batch of merged dataframes in a highly compressed parquet format"""
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Create filename based on batch index
+    output_path = os.path.join(output_dir, f"merged_batch_{batch_idx:04d}.parquet")
+    
+    # Combine all dataframes in the batch
+    combined_df = pd.concat(merged_dfs_batch, ignore_index=True)
+    
+    # Keep only transformed point clouds, timestamps, and tuple index
+    columns_to_keep = ['ts', 'tuple_idx']
+    transformed_cols = [col for col in combined_df.columns if col.endswith('_transformed')]
+    columns_to_keep.extend(transformed_cols)
+    
+    # Filter to only the columns we want
+    df_to_save = combined_df[columns_to_keep].copy()
+    
+    # Convert point cloud arrays to bytes for parquet compatibility
+    for col in df_to_save.columns:
+        if col.startswith('pcd_'):
+            # Convert numpy arrays to bytes for compact storage, using float32 for smaller size
+            df_to_save[col] = df_to_save[col].apply(
+                lambda points: points.astype(np.float32).tobytes() if len(points) > 0 else b''
+            )
+    
+    # Save as parquet with maximum compression
+    df_to_save.to_parquet(
+        output_path, 
+        compression='zstd',  # Very good compression ratio
+        compression_level=22,  # Maximum compression level for zstd
+        index=False
+    )
+    return output_path
+
+def load_merged_dataframe(parquet_path):
+    """Load merged dataframe and reconstruct point cloud arrays"""
+    df = pd.read_parquet(parquet_path)
+    
+    for col in df.columns:
+        if col.startswith('pcd_'):
+            # Convert bytes back to numpy arrays (now stored as float32)
+            df[col] = df[col].apply(
+                lambda data: np.frombuffer(data, dtype=np.float32).reshape(-1, 2) if len(data) > 0 else np.array([]).reshape(0, 2)
+            )
+    
+    return df
+
 if __name__ == "__main__":
     # print("Getting all recording files...")
     # all_files = get_all_recording_files(RECORDING_ROOT_DIR)
@@ -325,15 +374,90 @@ if __name__ == "__main__":
     with open(TRANSFORMS_FILE, 'r') as f:
         transforms = json.load(f)
 
-    DATA_IDX = 20670
-    print(intersecting_tuples[DATA_IDX])
-    data = read_npzs_from_tuple(intersecting_tuples[DATA_IDX])
-    merged_df = merge_npzs(data)
+    # Process all intersecting tuples in batches of 10
+    BATCH_SIZE = 10
+    num_batches = (len(intersecting_tuples) + BATCH_SIZE - 1) // BATCH_SIZE
+    print(f"Processing {len(intersecting_tuples)} intersecting tuples in {num_batches} batches of {BATCH_SIZE}...")
     
-    # Refine transforms using ICP on first frame
-    refined_transforms = refine_transforms_with_icp(merged_df, transforms)
+    successful_batches = 0
+    failed_tuples = 0
     
-    # Apply refined transforms to all timestamps
-    merged_df = add_transformed_points(merged_df, refined_transforms)
-    print(merged_df)    
-    create_video_from_dataframe(merged_df, "video.mp4")
+    for batch_idx in tqdm.tqdm(range(num_batches), desc="Processing batches"):
+        start_idx = batch_idx * BATCH_SIZE
+        end_idx = min((batch_idx + 1) * BATCH_SIZE, len(intersecting_tuples))
+        batch_tuples = intersecting_tuples[start_idx:end_idx]
+        
+        print(f"\nBatch {batch_idx + 1}/{num_batches} (tuples {start_idx}-{end_idx-1})")
+        
+        # Process first tuple in batch to refine transforms with ICP
+        if batch_tuples:
+            try:
+                print("  Loading first tuple for ICP refinement...")
+                first_data = read_npzs_from_tuple(batch_tuples[0])
+                first_merged_df = merge_npzs(first_data)
+                print("  Running ICP refinement...")
+                refined_transforms = refine_transforms_with_icp(first_merged_df, transforms)
+                print("  ICP refinement complete")
+            except Exception as e:
+                print(f"  Error refining transforms for batch {batch_idx + 1}: {e}")
+                refined_transforms = transforms
+        else:
+            refined_transforms = transforms
+        
+        # Process all tuples in this batch
+        batch_merged_dfs = []
+        batch_failed = 0
+        
+        print(f"  Processing {len(batch_tuples)} tuples in batch...")
+        for tuple_idx, tuple_data in tqdm.tqdm(enumerate(batch_tuples), 
+                                               desc="  Tuples in batch", 
+                                               total=len(batch_tuples), 
+                                               leave=False):
+            try:
+                # Read and merge data for this tuple
+                data = read_npzs_from_tuple(tuple_data)
+                merged_df = merge_npzs(data)
+                
+                # Apply refined transforms to all timestamps
+                merged_df = add_transformed_points(merged_df, refined_transforms)
+                
+                # Add tuple index for reference
+                merged_df['tuple_idx'] = start_idx + tuple_idx
+                
+                batch_merged_dfs.append(merged_df)
+                
+            except Exception as e:
+                print(f"  Error processing tuple {start_idx + tuple_idx}: {e}")
+                batch_failed += 1
+                failed_tuples += 1
+                continue
+        
+        # Save the entire batch as one file
+        if batch_merged_dfs:
+            try:
+                print(f"  Saving batch with {len(batch_merged_dfs)} tuples...")
+                output_path = save_batch_dataframes(batch_merged_dfs, batch_idx, OUT_DIR)
+                successful_batches += 1
+                print(f"  ✓ Saved batch {batch_idx + 1} to {os.path.basename(output_path)}")
+            except Exception as e:
+                print(f"  ✗ Error saving batch {batch_idx + 1}: {e}")
+                failed_tuples += len(batch_merged_dfs)
+        else:
+            print(f"  ✗ No valid tuples in batch {batch_idx + 1}")
+        
+        if batch_failed > 0:
+            print(f"  ⚠ Failed to process {batch_failed} tuples in batch {batch_idx + 1}")
+        
+        # Progress summary every 50 batches
+        if (batch_idx + 1) % 50 == 0:
+            print(f"\n--- Progress Summary ---")
+            print(f"Completed: {batch_idx + 1}/{num_batches} batches ({(batch_idx + 1)/num_batches*100:.1f}%)")
+            print(f"Successful batches: {successful_batches}")
+            print(f"Failed tuples so far: {failed_tuples}")
+            print("-----------------------\n")
+    
+    print(f"\n🎉 Processing complete!")
+    print(f"Successfully processed batches: {successful_batches}/{num_batches}")
+    print(f"Failed tuples: {failed_tuples}")
+    print(f"Output directory: {OUT_DIR}")
+    print(f"Expected output files: ~{num_batches} parquet files")
