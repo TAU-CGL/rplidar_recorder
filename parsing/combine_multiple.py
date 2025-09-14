@@ -6,6 +6,7 @@ import os
 import json
 import datetime
 import itertools
+import sys
 
 import tqdm
 import numpy as np
@@ -15,15 +16,20 @@ import cv2
 from scipy.spatial.distance import cdist
 
 
-RECORDING_ROOT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Lab446"
-OUT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Lab446_Processed"
-TRANSFORMS_FILE = "scripts/raw/lab446a_20250828_1424/transforms.json"
+# RECORDING_ROOT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Lab446"
+# OUT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Lab446_Processed"
+# TRANSFORMS_FILE = "scripts/raw/lab446a_20250828_1424/transforms.json"
+
+RECORDING_ROOT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Floor4Kitchenette"
+OUT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Floor4Kitchenette_Processed"
+TRANSFORMS_FILE = "scripts/raw/kitchenette/transforms.json"
+
 UUID_TO_DEV = {
     "8dc0b0fc-cb63-4f6c-ad49-b6f27673fef9": "dev1",
     "6bf095b9-06a5-495b-88d9-194e6357eeb1": "dev2",
     "a4b8e68f-99b0-4c80-b2b6-de006906af2f": "dev3",
     "44d9d253-58cc-4dca-a412-bb4803eef6c9": "dev4",
-    "fcc61f1f-0193-4e19-9242-edcd505ca4f7": "dev5"
+    # "fcc61f1f-0193-4e19-9242-edcd505ca4f7": "dev5"
 }
 
 
@@ -360,11 +366,11 @@ def load_merged_dataframe(parquet_path):
     return df
 
 if __name__ == "__main__":
-    # print("Getting all recording files...")
-    # all_files = get_all_recording_files(RECORDING_ROOT_DIR)
-    # with open("all_files.json", 'w') as f:
-    #     json.dump(all_files, f, indent=2)
-    # print("Done.")
+    print("Getting all recording files...")
+    all_files = get_all_recording_files(RECORDING_ROOT_DIR)
+    with open("all_files.json", 'w') as f:
+        json.dump(all_files, f, indent=2)
+    print("Done.")
     with open("all_files.json", 'r') as f:
         all_files = json.load(f)
     intersecting_tuples = finds_all_intersecting_tuples(all_files)
@@ -420,7 +426,25 @@ if __name__ == "__main__":
                 
                 # Apply refined transforms to all timestamps
                 merged_df = add_transformed_points(merged_df, refined_transforms)
-                
+
+                # Display first union point cloud and exit
+                if start_idx + tuple_idx == 0:
+                    first_row = merged_df.iloc[0]
+                    plt.figure(figsize=(10, 10))
+                    colors = ['red', 'blue', 'green', 'orange', 'purple']
+                    color_idx = 0
+                    for col in merged_df.columns:
+                        if col.endswith('_transformed'):
+                            points = first_row[col]
+                            if len(points) > 0:
+                                plt.scatter(points[:, 0], points[:, 1], c=colors[color_idx % len(colors)], s=1, alpha=0.7, label=col.replace('pcd_', '').replace('_transformed', ''))
+                                color_idx += 1
+                    plt.legend()
+                    plt.axis('equal')
+                    plt.title('First Union Point Cloud')
+                    plt.show()
+                    sys.exit(-1)
+
                 # Add tuple index for reference
                 merged_df['tuple_idx'] = start_idx + tuple_idx
                 
