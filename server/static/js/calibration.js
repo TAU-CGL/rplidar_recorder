@@ -127,11 +127,63 @@ async function visualize_fit_circles(id) {
         body: payload
     });
     response.blob().then(blob => {
-        let img = document.getElementById("image" + id.toString());
-        img.src = URL.createObjectURL(blob);
-        img.onload = function() {
-            URL.revokeObjectURL(img.src); // Clean up the object URL
-        };
+        // let img = document.getElementById("image" + id.toString());
+        // img.src = URL.createObjectURL(blob);
+        // img.onload = function() {
+        //     URL.revokeObjectURL(img.src); // Clean up the object URL
+        // };
+        let url = URL.createObjectURL(blob);
+        window.open(url, "_blank");  // Opens the image in a new tab
+        // optional cleanup
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+}
+
+async function calibrate() {
+    let circle1 = document.getElementById("text1").value;
+    let circle2 = document.getElementById("text2").value;
+
+    let payload = new URLSearchParams({
+        circle1: circle1,
+        circle2: circle2
+    }).toString();
+
+    let response = await fetch("/api/calibration/calibrate", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: payload
+    });
+
+    let text = document.getElementById("calibration-text");
+    text.value = await response.text();
+}
+
+async function visualize_calibration() {
+    let scans = await fetch_recent_scans();
+    let calibration = document.getElementById("calibration-text").value;
+    let payload = new URLSearchParams({
+        scans: JSON.stringify(scans),
+        calibration: calibration
+    }).toString();
+    let response = await fetch("/api/calibration/calibrate/visualize", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: payload
+    });
+    response.blob().then(blob => {
+        // let img = document.getElementById("calibration-image");
+        // img.src = URL.createObjectURL(blob);
+        // img.onload = function() {
+        //     URL.revokeObjectURL(img.src); // Clean up the object URL
+        // };
+        let url = URL.createObjectURL(blob);
+        window.open(url, "_blank");  // Opens the image in a new tab
+        // optional cleanup
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
     });
 }
 

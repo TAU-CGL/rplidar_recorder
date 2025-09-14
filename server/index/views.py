@@ -160,6 +160,57 @@ def calibration_visualize_fit_circles(request):
 
     return HttpResponse(image.tobytes(), content_type='image/png')
 
+@csrf_exempt
+@require_POST
+def calibrate(request):
+    circle1 = json.loads(request.POST["circle1"])
+    circle2 = json.loads(request.POST["circle2"])
+    devices = list(circle1.keys())
+    circles = {}
+    for dev in devices:
+        c1 = circle1[dev]
+        c1 = reccalib.Circle(center=np.array(c1['center']), radius=c1['radius'])
+        c2 = circle2[dev]
+        c2 = reccalib.Circle(center=np.array(c2['center']), radius=c2['radius'])
+        circles[dev] = (c1, c2)
+
+    result = {}
+    for dev1 in devices:
+        result[dev1] = {}
+        for dev2 in devices:
+            if dev1 == dev2:
+                continue
+            T = reccalib.find_best_transform(*circles[dev1], *circles[dev2])
+            result[dev1][dev2] = T.tolist()
+    return JsonResponse(result, status=200)
+
+@csrf_exempt
+@require_POST
+def visualize_calibration(request):
+    scans = json.loads(request.POST["scans"])
+    calibration = json.loads(request.POST["calibration"])
+
+    figure, axis = plt.subplots(1, 1, figsize=(10, 10))
+    devices = list(scans.keys())
+    lidars = {dev : np.array(scans[dev]) for dev in scans}
+
+    axis.plot(lidars[devices[0]][:,0], lidars[devices[0]][:,1], 'bo', markersize=2)
+
+    for dev in devices[1:]:
+        try:
+            T = np.array(calibration[dev][devices[0]])
+            transformed = np.dot(lidars[dev], T[:2, :2].T) + T[:2, 2]
+            axis.plot(transformed[:,0], transformed[:,1], 'ro', markersize=2)
+        except KeyError:
+            continue
+
+    figure.canvas.draw()
+    image = np.asarray(figure.canvas.renderer.buffer_rgba())[:,:,:3]
+    plt.close()
+    _, image = cv2.imencode('.png', image)
+
+    return HttpResponse(image.tobytes(), content_type='image/png')
+
 # -------------------------------------------------------------
 
 

@@ -178,3 +178,4 @@ cython_debug/
 static/admin
 secret.sh
 tmp/
+analyzed_results/

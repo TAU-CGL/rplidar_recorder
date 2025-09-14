@@ -1,5 +1,8 @@
 import reccalib
 
+import sys
+import json
+
 import cv2
 import numpy as np
 import open3d as o3d
@@ -7,10 +10,69 @@ import matplotlib.pyplot as plt
 
 from data import *
 
-R1 = 0.18/2
-R2 = 0.28/2
+R = 0.18
+
+FILE1 = "scripts/raw/kitchenette/scans_2025-09-04-16-43-09.json"
+FILE2 = "scripts/raw/kitchenette/scans_2025-09-04-16-51-11.json"
 
 if __name__ == "__main__":
+
+    with open(FILE1, 'r') as fp:
+        lidars1 = json.load(fp)
+    with open(FILE2, 'r') as fp:
+        lidars2 = json.load(fp)
+    devices = ["dev1", "dev2", "dev3", "dev4", "dev5"]
+
+    lidars1_tmp = {
+        "dev1": (2.35, -2.14),
+        "dev2": (1.06, -3.72),
+        "dev3": (-2.16, -3.88),
+        "dev4": (0.407, -5.46),
+        "dev5": (0.35, -1.49),
+    }
+    lidars2_tmp = {
+        "dev1": (1.972, -3.50),
+        "dev2": (2.454, -4.12),
+        "dev3": (-0.74, -4.28),
+        "dev4": (0.848, -4.08),
+        "dev5": (0.376, -1.49),
+    }
+    dx = 1
+
+    circle1 = {}
+    circle2 = {}
+
+    for lidars, lidars_tmp, circle in [(lidars1, lidars1_tmp, circle1), (lidars2, lidars2_tmp, circle2)]:
+        for dev in devices:
+            points = lidars[dev]
+            filtered_points = []
+            x_, y_ = lidars_tmp[dev]
+            for x, y in points:
+                if x < x_ - dx or x > x_ + dx:
+                    continue
+                if y < y_ - dx or y > y_ + dx:
+                    continue
+                filtered_points.append((x, y))
+            filtered_points = np.array(filtered_points)
+            points = np.array(lidars[dev])
+            ls = reccalib.LidarSnapshot(points=filtered_points, device_id=dev, timestamp=0)
+            circ = reccalib.find_best_circle(ls, R)
+            circle[dev] = {"center": circ.center.tolist(), "radius": circ.radius}
+
+            print(dev, circ)
+
+            plt.scatter(points[:,0], points[:,1], s=1)
+            plt.gca().add_patch(plt.Circle(circ.center, circ.radius, color='r', fill=False, label='C1 radius'))
+            plt.show()
+
+    print("CIRCLE1\n\n")
+    print(json.dumps(circle1))
+    print("\n\n----------------------\n\nCIRCLE2\n\n")
+    print(json.dumps(circle2))
+
+    sys.exit(0)
+
+
     raw_lidars = [lidar1, lidar2, lidar3, lidar4, lidar5]
     # raw_lidars = raw_lidars[:2]  # For testing, use only the first two
     lidars = []
