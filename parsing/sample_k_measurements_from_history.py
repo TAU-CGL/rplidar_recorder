@@ -184,7 +184,7 @@ def process_parquet_file_worker(args):
 
 def main():
     # Configuration
-    DATA_DIR = Path("/Volumes/My Passport/ICRA2026-DataCollection/Lab446_Processed")
+    DATA_DIR = Path("/Volumes/My Passport/ICRA2026-DataCollection/Floor4Kitchenette_Processed")
     OUTPUT_DIR = Path("/Volumes/My Passport/ICRA2026-DataCollection/processed_results")
     
     # Create output directory

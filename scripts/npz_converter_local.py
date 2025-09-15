@@ -37,8 +37,8 @@ from rclpy.serialization import deserialize_message
 # ---------------------------------------------------------------------------
 # Hard‑coded I/O locations  (edit here only)
 # ---------------------------------------------------------------------------
-INPUT_DIR = Path.home() / "Downloads" / "sftp"          # raw bags
-OUTPUT_DIR = Path.home() / "Downloads" / "npz_output"   # destination tree
+INPUT_DIR = Path("/Volumes/My Passport/ICRA2026-DataCollection/Floor4Kitchenette/raw")
+OUTPUT_DIR = Path("/Volumes/My Passport/ICRA2026-DataCollection/Floor4Kitchenette/npz")
 OVERWRITE = False                                         # set True to redo
 
 # ---------------------------------------------------------------------------

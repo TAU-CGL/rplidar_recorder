@@ -20,7 +20,7 @@ from scipy.spatial.distance import cdist
 # OUT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Lab446_Processed"
 # TRANSFORMS_FILE = "scripts/raw/lab446a_20250828_1424/transforms.json"
 
-RECORDING_ROOT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Floor4Kitchenette"
+RECORDING_ROOT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Floor4Kitchenette/npz"
 OUT_DIR = "/Volumes/My Passport/ICRA2026-DataCollection/Floor4Kitchenette_Processed"
 TRANSFORMS_FILE = "scripts/raw/kitchenette/transforms.json"
 
@@ -29,7 +29,7 @@ UUID_TO_DEV = {
     "6bf095b9-06a5-495b-88d9-194e6357eeb1": "dev2",
     "a4b8e68f-99b0-4c80-b2b6-de006906af2f": "dev3",
     "44d9d253-58cc-4dca-a412-bb4803eef6c9": "dev4",
-    # "fcc61f1f-0193-4e19-9242-edcd505ca4f7": "dev5"
+    "fcc61f1f-0193-4e19-9242-edcd505ca4f7": "dev5"
 }
 
 
@@ -153,7 +153,7 @@ def add_transformed_points(merged_df, transforms):
     
     return merged_df
 
-def simple_icp(source_points, target_points, max_iterations=50, tolerance=1e-7):
+def simple_icp(source_points, target_points, max_iterations=10, tolerance=1e-7):
     """Simple ICP implementation to refine transformation between point clouds"""
     if len(source_points) == 0 or len(target_points) == 0:
         return np.eye(3)
@@ -443,7 +443,7 @@ if __name__ == "__main__":
                     plt.axis('equal')
                     plt.title('First Union Point Cloud')
                     plt.show()
-                    sys.exit(-1)
+                    # sys.exit(-1)
 
                 # Add tuple index for reference
                 merged_df['tuple_idx'] = start_idx + tuple_idx
